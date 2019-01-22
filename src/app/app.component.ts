@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { RepositoryService } from './core/domain/repository.service';
+import { Repository } from './core/domain/repository.model';
 
 @Component({
   selector: 'app-root',

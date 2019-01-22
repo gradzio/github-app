@@ -3,16 +3,27 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { MemoryStorage } from './core/ cache/memory.store';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { CacheInterceptor } from './core/ cache/cache.interceptor';
+import { OrganizationComponent } from './organization/organization.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    OrganizationComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    RouterModule
   ],
-  providers: [],
+  providers: [
+    MemoryStorage,
+    { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
