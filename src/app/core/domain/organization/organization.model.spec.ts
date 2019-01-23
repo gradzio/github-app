@@ -1,5 +1,5 @@
 import { Organization } from "./organization.model";
-import { Contributor } from './contributor.model';
+import { Contributor } from '../contributor/contributor.model';
 
 describe('Organization', () => {
     let organization;

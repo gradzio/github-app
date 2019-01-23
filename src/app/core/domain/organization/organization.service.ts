@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
-import { Repository } from './repository.model';
-import { Contributor } from './contributor.model';
+import { Repository } from '../repository/repository.model';
+import { Contributor } from '../contributor/contributor.model';
 import { Organization } from './organization.model';
 import { switchMap, map, tap } from 'rxjs/operators';
 import { all } from 'q';
@@ -18,7 +18,7 @@ export class OrganizationService {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer 6ba278712f38dc6b05d8ac4c2203b4f4b107e48e'
           })
-        return this.client.get<any>(`https://api.github.com/orgs/${organization.name}/repos?per_page=1000`, {headers})
+        return this.client.get<any>(`https://api.github.com/orgs/${organization.name}/repos?per_page=100`, {headers})
         .pipe(
             switchMap(response => {
                 const allCalls = response.map(repo => this.client.get(`https://api.github.com/repos/${repo.full_name}/contributors?per_page=1000`, {headers}));
@@ -30,7 +30,6 @@ export class OrganizationService {
                         organization.addContributor(new Contributor(contributor.id, contributor.login))
                     )
                 );
-
                 return organization;
             })
         );

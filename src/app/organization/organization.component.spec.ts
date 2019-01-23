@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OrganizationComponent } from './organization.component';
+import { OrganizationService } from '../core/domain/organization/organization.service';
+import { OrganizationServiceStub } from '../core/domain/organization/organization.service.stub';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterModule } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('OrganizationComponent', () => {
   let component: OrganizationComponent;
@@ -8,7 +13,11 @@ describe('OrganizationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OrganizationComponent ]
+      imports: [HttpClientTestingModule, RouterTestingModule],
+      declarations: [ OrganizationComponent ],
+      providers: [
+        {provide: OrganizationService, useClass: OrganizationServiceStub}
+      ]
     })
     .compileComponents();
   }));
@@ -21,5 +30,11 @@ describe('OrganizationComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should get contributors', () => {
+    component.organization$.subscribe(organization => {
+      expect(organization.contributors.size).toBe(2);
+    });
   });
 });

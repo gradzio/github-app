@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Contributor } from './contributor.model';
 import { Observable, of, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Repository } from './repository.model';
+import { Repository } from '../repository/repository.model';
 
 
 @Injectable({
@@ -13,8 +13,18 @@ export class ContributorService {
 
     constructor(private client: HttpClient) { }
 
-    getContributorRepos(contributor: Contributor): Observable<Repository[]> {
-        return this.client.get<Repository[]>(`https://api.github.com/users/${contributor.username}/repos`);
+    getContributorRepos(contributor: Contributor): Observable<Contributor> {
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 6ba278712f38dc6b05d8ac4c2203b4f4b107e48e'
+          })
+        return this.client.get<any>(`https://api.github.com/users/${contributor.username}/repos?per_page=100`, { headers, observe: 'response'})
+        .pipe(
+            map(response => {
+                response.body.forEach(repo => contributor.addRepository(repo));
+                return contributor;
+            })
+        );
     }
 
     getOne(contributor: Contributor): Observable<Contributor> {

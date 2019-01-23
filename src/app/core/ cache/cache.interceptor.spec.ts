@@ -10,7 +10,7 @@ class HttpHandlerStub implements HttpHandler {
     }
 }
 
-fdescribe('CacheInterceptor', () => {
+describe('CacheInterceptor', () => {
     let interceptor;
     beforeEach(() => {
         interceptor = new CacheInterceptor(new MemoryStorage());
@@ -26,7 +26,7 @@ fdescribe('CacheInterceptor', () => {
         
         expect(cacheGetSpy).toHaveBeenCalledTimes(1);
         expect(cacheSetSpy).not.toHaveBeenCalled();
-        actual$.subscribe(response => expect(response.body).toEqual('foo'));
+        actual$.subscribe(response => expect(response).toEqual('foo'));
    });
 
    it('should call next handler if no cache value', () => {
@@ -40,4 +40,6 @@ fdescribe('CacheInterceptor', () => {
             expect(cacheSetSpy).toHaveBeenCalledTimes(1);
         });
    });
+
+   it('should set ')
 });

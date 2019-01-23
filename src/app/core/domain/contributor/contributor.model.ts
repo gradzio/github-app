@@ -1,4 +1,4 @@
-import { Repository } from './repository.model';
+import { Repository } from '../repository/repository.model';
 
 export class Contributor {
     private _id            : number;

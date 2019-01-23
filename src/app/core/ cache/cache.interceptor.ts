@@ -9,14 +9,14 @@ export class CacheInterceptor implements HttpInterceptor {
   constructor(private cache: MemoryStorage) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const cachedResponseBody = this.cache.getItem(req.url);
-    if (cachedResponseBody) {
-        return of(new HttpResponse({body: cachedResponseBody}));
+    const cachedResponse = this.cache.getItem(req.url);
+    if (cachedResponse) {
+        return of(cachedResponse);
     }
     return next.handle(req).pipe(
         map((event: HttpEvent<any>) => {
             if (event instanceof HttpResponse) {
-                this.cache.setItem(req.url, event.body);
+                this.cache.setItem(req.url, event);
             }
             return event;
         }));

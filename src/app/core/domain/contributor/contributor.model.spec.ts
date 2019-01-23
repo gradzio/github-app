@@ -1,5 +1,5 @@
 import { Contributor } from "./contributor.model";
-import { Repository } from './repository.model';
+import { Repository } from '../repository/repository.model';
 
 describe('Contributor', () => {
     let contributor;

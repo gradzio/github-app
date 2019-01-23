@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
     providedIn: 'root'
 })
 export class MemoryStorage implements Storage {
-    private storage: Map<string, string>;
+    private storage: Map<string, any>;
     constructor() {
         if (!this.storage) {
             this.storage = new Map();
@@ -16,10 +16,10 @@ export class MemoryStorage implements Storage {
         this.storage.clear();
     }
 
-    getItem(key: string): string | null {
+    getItem(key: string) {
         return this.storage.get(key) || null;
     }
-    key(index: number): string | null {
+    key(index: number) {
         if (index < 0 || index >= this.storage.size) {
             return null;
         }
@@ -29,7 +29,7 @@ export class MemoryStorage implements Storage {
         this.storage.delete(key);
     }
 
-    setItem(key: string, value: string): void {
+    setItem(key: string, value: any): void {
         this.storage.set(key, value);
     }
     [name: string]: any;

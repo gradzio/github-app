@@ -1,7 +1,9 @@
+import { Contributor } from '../contributor/contributor.model';
 
 export class Repository {
     private _organization : string;
     private _name         : string;
+    private _contributors : Contributor[] = [];
     constructor(fullName: string) {
         const split = fullName.split('/');
         this._organization = split[0];
@@ -14,6 +16,14 @@ export class Repository {
 
     get name() {
         return this._name;
+    }
+
+    addContributors(contributors) {
+        this._contributors = this._contributors.concat(contributors);
+    }
+
+    get contributors() {
+        return this._contributors;
     }
 
     get contributorsUrl() {

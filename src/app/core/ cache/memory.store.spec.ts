@@ -1,6 +1,6 @@
 import { MemoryStorage } from "./memory.store";
 
-fdescribe('MemoryCache', () => {
+describe('MemoryCache', () => {
     let cache;
     beforeEach(() => {
         cache = new MemoryStorage();

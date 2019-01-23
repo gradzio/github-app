@@ -1,5 +1,5 @@
-import { Contributor } from './contributor.model';
-import { Repository } from './repository.model';
+import { Contributor } from '../contributor/contributor.model';
+import { Repository } from '../repository/repository.model';
 
 export class Organization {
     private _name        : string;

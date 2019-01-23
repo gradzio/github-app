@@ -8,11 +8,16 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CacheInterceptor } from './core/ cache/cache.interceptor';
 import { OrganizationComponent } from './organization/organization.component';
 import { RouterModule } from '@angular/router';
+import { LinkHeaderParser } from './core/pagination/link-header.parser';
+import { RepositoryDetailComponent } from './repository-detail/repository-detail.component';
+import { ContributorDetailComponent } from './contributor-detail/contributor-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    OrganizationComponent
+    OrganizationComponent,
+    ContributorDetailComponent,
+    RepositoryDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -22,6 +27,7 @@ import { RouterModule } from '@angular/router';
   ],
   providers: [
     MemoryStorage,
+    LinkHeaderParser,
     { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

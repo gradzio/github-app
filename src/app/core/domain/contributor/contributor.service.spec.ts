@@ -4,24 +4,31 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { ContributorService } from './contributor.service';
 import { Contributor } from './contributor.model';
 
-describe('ContributorService', () => {
-    beforeEach(() => TestBed.configureTestingModule({
+xdescribe('ContributorService', () => {
+  let service: ContributorService;
+    beforeEach(() => {
+      TestBed.configureTestingModule({
         imports: [
           HttpClientModule,
         //   HttpClientTestingModule
         ]
-      }));
+      });
+      service = TestBed.get(ContributorService);
+    });
     
       it('should be created', () => {
-        const service: ContributorService = TestBed.get(ContributorService);
         expect(service).toBeTruthy();
       });
 
       it('should get contributor', () => {
-         // TODO: contributions ??
-         const service: ContributorService = TestBed.get(ContributorService);
          service.getOne(new Contributor(1, 'bradlygreen')).subscribe(contributor => {
             console.log(contributor.followers, contributor.repoCount);
          });
+      });
+
+      it('should get contributor repos', () => {
+        service.getContributorRepos(new Contributor(1, 'bradlygreen')).subscribe(contributor => {
+          expect(contributor.repositories.length).toBeGreaterThan(0);
+        });
       });
 });
