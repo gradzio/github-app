@@ -27,8 +27,8 @@ xdescribe('ContributorService', () => {
       });
 
       it('should get contributor repos', () => {
-        service.getContributorRepos(new Contributor(1, 'bradlygreen')).subscribe(contributor => {
-          expect(contributor.repositories.length).toBeGreaterThan(0);
+        service.getContributorRepos(new Contributor(1, 'bradlygreen')).subscribe(repositories => {
+          expect(repositories.length).toBeGreaterThan(0);
         });
       });
 });

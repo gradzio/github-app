@@ -2,29 +2,45 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Contributor } from './contributor.model';
 import { Observable, of, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Repository } from '../repository/repository.model';
+import { PaginatedService } from '../../pagination/paginated.service';
+import { LinkHeaderParser } from '../../pagination/link-header.parser';
 
 
 @Injectable({
 providedIn: 'root'
 })
-export class ContributorService {
+export class ContributorService extends PaginatedService {
+    protected perPage = 5;
+    protected page;
+    constructor(protected client: HttpClient, protected parser: LinkHeaderParser) {
+        super(client, parser);
+    }
 
-    constructor(private client: HttpClient) { }
-
-    getContributorRepos(contributor: Contributor): Observable<Contributor> {
+    getContributorRepos(contributor: Contributor): Observable<Repository[]> {
+        const baseUri = `https://api.github.com/users/${contributor.username}/repos`;
         const headers = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': 'Bearer 6ba278712f38dc6b05d8ac4c2203b4f4b107e48e'
           })
-        return this.client.get<any>(`https://api.github.com/users/${contributor.username}/repos?per_page=100`, { headers, observe: 'response'})
+        return this.client.get<any>(`${baseUri}?page=${this.page}&per_page=${this.perPage}`, { headers, observe: 'response'})
         .pipe(
-            map(response => {
-                response.body.forEach(repo => contributor.addRepository(repo));
-                return contributor;
+            switchMap((resp:any) => this.getRemainingPages(resp, baseUri)),
+            map((allResponses: any) => {
+                const repos = [];
+                allResponses
+                .filter(response => response.body)
+                .forEach(response => {
+                    response.body.forEach(repo => repos.push(new Repository(repo.full_name)));
+                });
+                return repos;
             })
         );
+    }
+
+    getRemainingPages(resp, baseUri) {
+        return super.getRemainingPages(resp, baseUri);
     }
 
     getOne(contributor: Contributor): Observable<Contributor> {

@@ -1,4 +1,1 @@
-<p>
-  Repo page!
-  {{ repository$ | async | json}}
-</p>
+<app-sortable-table [collection]="(contributors$ | async)" (itemSelected)="onItemSelected($event)"></app-sortable-table>

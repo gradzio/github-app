@@ -18,6 +18,10 @@ export class Repository {
         return this._name;
     }
 
+    get fullName() {
+        return this._organization + '/' + this._name;
+    }
+
     addContributors(contributors) {
         this._contributors = this._contributors.concat(contributors);
     }

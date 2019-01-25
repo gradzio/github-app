@@ -1,0 +1,6 @@
+<mat-list *ngIf="items else spinner">
+    <mat-list-item *ngFor="let item of items"><button (click)="onClicked(item)" mat-raised-button color="accent">{{item.fullName}}</button></mat-list-item>
+</mat-list>
+<ng-template #spinner>
+    <mat-spinner></mat-spinner>
+</ng-template>

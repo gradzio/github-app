@@ -11,6 +11,9 @@ import { RouterModule } from '@angular/router';
 import { LinkHeaderParser } from './core/pagination/link-header.parser';
 import { RepositoryDetailComponent } from './repository-detail/repository-detail.component';
 import { ContributorDetailComponent } from './contributor-detail/contributor-detail.component';
+import { SharedModule } from './shared/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -20,10 +23,12 @@ import { ContributorDetailComponent } from './contributor-detail/contributor-det
     RepositoryDetailComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
-    RouterModule
+    SharedModule
   ],
   providers: [
     MemoryStorage,

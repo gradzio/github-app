@@ -33,8 +33,8 @@ describe('OrganizationComponent', () => {
   });
 
   it('should get contributors', () => {
-    component.organization$.subscribe(organization => {
-      expect(organization.contributors.size).toBe(2);
+    component.contributors$.subscribe(contributors => {
+      expect(contributors.items.length).toBe(2);
     });
   });
 });

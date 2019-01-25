@@ -11,11 +11,11 @@ const routes: Routes = [
     component: OrganizationComponent
   },
   {
-    path: 'contributor/:contributorId',
+    path: 'contributor',
     component: ContributorDetailComponent
   },
   {
-    path: 'repo/:repoId',
+    path: 'repo',
     component: RepositoryDetailComponent
   }
 ];

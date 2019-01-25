@@ -1,4 +1,1 @@
-<p>
-  contributor-detail works!
-  {{ contributor$ | async | json }}
-</p>
+<app-simple-list [items]="contributorRepos$ | async" (itemSelected)="onItemSelected($event)"></app-simple-list>

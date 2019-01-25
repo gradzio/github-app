@@ -1,3 +1,6 @@
-<div *ngFor="let contributor of (organization$ | async)?.contributors | keyvalue">
-  <a [routerLink]="['/contributor', contributor.value.id]">{{contributor.key}} {{contributor.value.id}}</a>
-</div>
+
+<h1>{{organization.name}} # of repos: {{(organization$ | async)?.repositories.size}} with # of contributors: {{(organization$ | async)?.contributors.length}}</h1>
+<app-sortable-table *ngIf="(contributors$ | async) else spinner" [collection]="(contributors$ | async)" (itemSelected)="onItemSelected($event)"></app-sortable-table>
+<ng-template #spinner>
+  <mat-spinner></mat-spinner>
+</ng-template>
