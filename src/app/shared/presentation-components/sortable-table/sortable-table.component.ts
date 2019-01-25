@@ -16,10 +16,6 @@ export class SortableTableComponent {
   @Output()
   itemSelected = new EventEmitter();
 
-
-  // @ViewChild(MatPaginator) paginator: MatPaginator;
-  // @ViewChild(MatSort) sort: MatSort;
-
   constructor() { }
 
   sortData(sort: Sort) {

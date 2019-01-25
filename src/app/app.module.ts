@@ -14,6 +14,7 @@ import { ContributorDetailComponent } from './contributor-detail/contributor-det
 import { SharedModule } from './shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {NgForageModule, NgForageConfig, Driver, NgForage} from 'ngforage';
 
 @NgModule({
   declarations: [
@@ -28,10 +29,12 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
-    SharedModule
+    SharedModule,
+    NgForageModule.forRoot(),
   ],
   providers: [
     MemoryStorage,
+    NgForage,
     LinkHeaderParser,
     { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }
   ],

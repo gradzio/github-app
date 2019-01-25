@@ -12,7 +12,7 @@ import { LinkHeaderParser } from '../../pagination/link-header.parser';
 providedIn: 'root'
 })
 export class ContributorService extends PaginatedService {
-    protected perPage = 5;
+    protected perPage = 100;
     protected page;
     constructor(protected client: HttpClient, protected parser: LinkHeaderParser) {
         super(client, parser);
@@ -48,7 +48,11 @@ export class ContributorService extends PaginatedService {
             // this.client.get<any[]>(`https://api.github.com/users/${contributor.username}/repos`),
             // this.client.get<any[]>(`https://api.github.com/users/${contributor.username}/followers`),
             // this.client.get<any[]>(`https://api.github.com/users/${contributor.username}/gists`),
-            return this.client.get<any>(`https://api.github.com/users/${contributor.username}`)
+            return this.client.get<any>(`https://api.github.com/users/${contributor.username}`, {
+                headers: new HttpHeaders({
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer 6ba278712f38dc6b05d8ac4c2203b4f4b107e48e'
+                })})
             .pipe(
             map(response => {
                 contributor.followers = response.followers;

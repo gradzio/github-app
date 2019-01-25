@@ -11,15 +11,23 @@
         <td>{{item.username}}</td>
       </tr>
 </table> -->
-<table *ngIf="collection && collection.items && collection.items.length else spinner" matSort (matSortChange)="sortData($event)">
+<table *ngIf="collection && collection.items && collection.items.length else spinner" matSort matSortActive="contributions" matSortDirection="desc" (matSortChange)="sortData($event)">
     <tr>
+      <!-- <th>Avatar</th> -->
       <th mat-sort-header="username">Username</th>
       <th mat-sort-header="contributions">Contributions</th>
+      <th mat-sort-header="repoCount">Public repos</th>
+      <th mat-sort-header="followers">Followers</th>
+      <th mat-sort-header="gists">Gists</th>
     </tr>
   
-    <tr *ngFor="let item of collection?.items">
+    <tr *ngFor="let item of collection?.items | slice:0:100">
+      <!-- <td><img [src]="item.avatarUrl" height="50"/></td> -->
       <td><button color="accent" (click)="onClicked(item)" mat-raised-button>{{item.username}}</button></td>
       <td>{{item.contributions}}</td>
+      <td>{{item.repoCount}}</td>
+      <td>{{item.followers}}</td>
+      <td>{{item.gists}}</td>
     </tr>
   </table>
   <ng-template #spinner>
@@ -27,6 +35,9 @@
         <tr>
             <th>Username</th>
             <th>Contributions</th>
+            <th>Public repos</th>
+            <th>Followers</th>
+            <th>Gists</th>
           </tr>
           <tbody>
               <mat-spinner></mat-spinner>
