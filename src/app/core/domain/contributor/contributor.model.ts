@@ -1,16 +1,29 @@
 import { Repository } from '../repository/repository.model';
 
+export interface ContributorStats {
+    repoCount     : number;
+    followers     : number;
+    gists         : number;
+}
+
 export class Contributor {
     private _id            : number;
     private _username      : string;
     private _contributions : number;
     private _followers     : number;
     private _gists         : number;
-    private _repoCount     : number;
+    private _repoCount     : number = 0;
     private _repositories = new Array<Repository>();
-    constructor(id, username) {
+    constructor(id, username, contributions) {
         this._id = id;
         this._username = username;
+        this._contributions = contributions;
+    }
+
+    merge(contributorDetail: ContributorStats) {
+        this._repoCount = contributorDetail.repoCount;
+        this._gists = contributorDetail.gists;
+        this._followers = contributorDetail.followers;
     }
 
     get id() {
@@ -30,6 +43,10 @@ export class Contributor {
             throw new Error('Negative number is not allowed');
         }
         this._contributions = contributions;
+    }
+
+    incrementContributions(contributions) {
+        this._contributions += contributions;
     }
 
     get contributions() {
@@ -57,6 +74,11 @@ export class Contributor {
 
     addRepository(repository: Repository) {
         this._repositories.push(repository);
+        this.incrementRepoCount(1);
+    }
+
+    incrementRepoCount(repoCount: number) {
+        this._repoCount += repoCount;
     }
 
     get repositories() {

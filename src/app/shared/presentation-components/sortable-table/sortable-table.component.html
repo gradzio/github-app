@@ -21,7 +21,7 @@
       <th mat-sort-header="gists">Gists</th>
     </tr>
   
-    <tr *ngFor="let item of collection?.items | slice:0:100">
+    <tr *ngFor="let item of collection?.items">
       <!-- <td><img [src]="item.avatarUrl" height="50"/></td> -->
       <td><button color="accent" (click)="onClicked(item)" mat-raised-button>{{item.username}}</button></td>
       <td>{{item.contributions}}</td>

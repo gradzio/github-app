@@ -17,21 +17,21 @@ describe('Organization', () => {
     });
 
     it('should have single contributor', () => {
-        organization.addContributor(new Contributor(1, 'username'));
+        organization.addContributor(new Contributor(1, 'username', 0));
         expect(organization.contributors.size).toEqual(1);
     });
 
     it('should get contributor', () => {
-        organization.addContributor(new Contributor(1, 'username'));
+        organization.addContributor(new Contributor(1, 'username', 0));
         const contributor = organization.getContributor('username');
         expect(contributor.id).toEqual(1);
         expect(contributor.username).toEqual('username');
     });
 
     it('should not duplicate same contributors', () => {
-        organization.addContributor(new Contributor(1, 'username1'));
-        organization.addContributor(new Contributor(2, 'username2'));
-        organization.addContributor(new Contributor(1, 'username1'));
+        organization.addContributor(new Contributor(1, 'username1', 0));
+        organization.addContributor(new Contributor(2, 'username2', 0));
+        organization.addContributor(new Contributor(1, 'username1', 0));
         expect(organization.contributors.size).toEqual(2);
     });
 });

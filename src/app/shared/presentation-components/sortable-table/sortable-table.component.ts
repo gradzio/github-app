@@ -19,7 +19,7 @@ export class SortableTableComponent {
   constructor() { }
 
   sortData(sort: Sort) {
-    this.collection.sort(sort.active, sort.direction);
+    this.collection.sort = sort;
   }
 
   onClicked($event) {

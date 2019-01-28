@@ -1,16 +1,19 @@
 import { Contributor } from "./contributor.model";
 import { Repository } from '../repository/repository.model';
+import { of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 describe('Contributor', () => {
     let contributor;
 
     beforeEach(() => {
-        contributor = new Contributor(1, 'username');
+        contributor = new Contributor(1, 'username', 1);
     });
 
-    it('should create default contributor', () => {
+    fit('should create default contributor', () => {
         expect(contributor.id).toEqual(1);
         expect(contributor.username).toEqual('username');
+        expect(contributor.contribution).toEqual(1);
     });
 
     it('should throw error on negative contribution count', () => {

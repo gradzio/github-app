@@ -5,7 +5,7 @@ import { Organization } from './organization.model';
 import { OrganizationService } from './organization.service';
 import { Contributor } from '../contributor/contributor.model';
 
-fdescribe('OrganizationService', () => {
+describe('OrganizationService', () => {
   let service: OrganizationService;
   let clientMock: HttpTestingController;
     beforeEach(() => {

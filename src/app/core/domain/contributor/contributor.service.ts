@@ -6,6 +6,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { Repository } from '../repository/repository.model';
 import { PaginatedService } from '../../pagination/paginated.service';
 import { LinkHeaderParser } from '../../pagination/link-header.parser';
+import { github } from 'src/config/github';
 
 
 @Injectable({
@@ -19,12 +20,8 @@ export class ContributorService extends PaginatedService {
     }
 
     getContributorRepos(contributor: Contributor): Observable<Repository[]> {
-        const baseUri = `https://api.github.com/users/${contributor.username}/repos`;
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer 6ba278712f38dc6b05d8ac4c2203b4f4b107e48e'
-          })
-        return this.client.get<any>(`${baseUri}?page=${this.page}&per_page=${this.perPage}`, { headers, observe: 'response'})
+        const baseUri = `${github.baseUrl}/users/${contributor.username}/repos`;
+        return this.client.get<any>(`${baseUri}?page=${this.page}&per_page=${this.perPage}`, { headers: github.headers, observe: 'response'})
         .pipe(
             switchMap((resp:any) => this.getRemainingPages(resp, baseUri)),
             map((allResponses: any) => {
@@ -48,11 +45,8 @@ export class ContributorService extends PaginatedService {
             // this.client.get<any[]>(`https://api.github.com/users/${contributor.username}/repos`),
             // this.client.get<any[]>(`https://api.github.com/users/${contributor.username}/followers`),
             // this.client.get<any[]>(`https://api.github.com/users/${contributor.username}/gists`),
-            return this.client.get<any>(`https://api.github.com/users/${contributor.username}`, {
-                headers: new HttpHeaders({
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer 6ba278712f38dc6b05d8ac4c2203b4f4b107e48e'
-                })})
+            return this.client.get<any>(`${github.baseUrl}/users/${contributor.username}`, {
+                headers: github.headers})
             .pipe(
             map(response => {
                 contributor.followers = response.followers;

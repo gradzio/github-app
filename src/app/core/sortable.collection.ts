@@ -1,13 +1,24 @@
-import { SortDirection } from '@angular/material';
+import { SortDirection, Sort } from '@angular/material';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class SortableCollection {
-    private _items;
-    constructor(items) {
+    private _sort: Sort;
+    private _items = [];
+    constructor(sort: Sort) {
+        this._sort = sort;
+    }
+
+    set items(items) {
         this._items = items;
     }
 
-    sort(property: string, direction: SortDirection) {
-        this._items.sort((a, b) => this._compare(a[property], b[property], direction === 'asc'));
+    set sort(sort: Sort) {
+        this._sort = sort;
+    }
+
+    private doSort() {
+        this._items.sort((a, b) => this._compare(a[this._sort.active], b[this._sort.active], this._sort.direction === 'asc'));
         return this._items;
     }
 
@@ -16,6 +27,6 @@ export class SortableCollection {
     }
 
     get items() {
-        return this._items;
+        return this.doSort();
     }
 }

@@ -13,8 +13,8 @@ describe('Repository', () => {
     it('should add contributors', () => {
         const repository = new Repository('org/repo');
 
-        repository.addContributors([new Contributor(1, 'username1')]);
-        repository.addContributors([new Contributor(2, 'username2')]);
+        repository.addContributors([new Contributor(1, 'username1', 0)]);
+        repository.addContributors([new Contributor(2, 'username2', 0)]);
 
         expect(repository.contributors.length).toEqual(2);
     });

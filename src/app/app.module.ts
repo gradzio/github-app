@@ -15,6 +15,7 @@ import { SharedModule } from './shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgForageModule, NgForageConfig, Driver, NgForage} from 'ngforage';
+import { StoreService } from './core/state/store.service';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import {NgForageModule, NgForageConfig, Driver, NgForage} from 'ngforage';
     MemoryStorage,
     NgForage,
     LinkHeaderParser,
+    StoreService,
     { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

@@ -1,10 +1,10 @@
-import { Contributor } from '../contributor/contributor.model';
+import { Contributor, ContributorStats } from '../contributor/contributor.model';
 import { Repository } from '../repository/repository.model';
 
 export class Organization {
     private _name        : string;
     private _contributors = {};
-    private _repositories: Map<string, Repository> = new Map();
+    private _repositories = {};
     constructor(name: string) {
         this._name = name;
     }
@@ -21,26 +21,47 @@ export class Organization {
         return Object.values(this._contributors);
     }
 
-    private mergeContributors(contributor) {
-        if (contributor.username in this._contributors) {
-            contributor.contributions += this._contributors[contributor.username].contributions;
+    private mergeContributors(contributor: Contributor) {
+        if (this.hasContributor(contributor.username)) {
+            const thisContributor = this.getContributor(contributor.username)
+            thisContributor.incrementContributions(contributor.contributions);
+            return thisContributor;
         }
         return contributor;
     }
 
-    addContributor(contributor: Contributor) {
-        this._contributors[contributor.username] = this.mergeContributors(contributor);
+    private firstOrCreateContributor(contributorData) {
+        return this.hasContributor(contributorData.login)
+        ? this.getContributor(contributorData.login)
+        : new Contributor(contributorData.id, contributorData.login, 0);
     }
 
-    getContributor(username): Contributor {
+    addContributor(contributorData) {
+        const orgContributor = this.firstOrCreateContributor(contributorData);
+        orgContributor.incrementContributions(contributorData.contributions);
+        orgContributor.incrementRepoCount(1);
+        this._contributors[orgContributor.username] = orgContributor;
+    }
+    
+    updateContributor(contributorUsername: string, contributorDetail: ContributorStats) {
+        const contributor = this._contributors[contributorUsername];
+        contributor.merge(contributorDetail);
+        this._contributors[contributorUsername] = contributor;
+    }
+
+    hasContributor(username: string): boolean {
+        return username in this._contributors;
+    }
+
+    getContributor(username: string): Contributor | null {
         return this._contributors[username];
     }
 
     get repositories() {
-        return this._repositories;
+        return Object.values(this._repositories);
     }
 
     addRepository(repository: Repository) {
-        this._repositories.set(repository.name, repository);
+        this._repositories[repository.name] = repository;
     }
 }

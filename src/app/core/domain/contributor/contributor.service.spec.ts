@@ -21,13 +21,13 @@ xdescribe('ContributorService', () => {
       });
 
       it('should get contributor', () => {
-         service.getOne(new Contributor(1, 'bradlygreen')).subscribe(contributor => {
+         service.getOne(new Contributor(1, 'bradlygreen', 1)).subscribe(contributor => {
             console.log(contributor.followers, contributor.repoCount);
          });
       });
 
       it('should get contributor repos', () => {
-        service.getContributorRepos(new Contributor(1, 'bradlygreen')).subscribe(repositories => {
+        service.getContributorRepos(new Contributor(1, 'bradlygreen', 1)).subscribe(repositories => {
           expect(repositories.length).toBeGreaterThan(0);
         });
       });
