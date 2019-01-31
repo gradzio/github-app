@@ -1,18 +1,12 @@
 import { Repository } from '../repository/repository.model';
 
-export interface ContributorStats {
-    repoCount     : number;
-    followers     : number;
-    gists         : number;
-}
-
 export class Contributor {
     private _id            : number;
     private _username      : string;
     private _contributions : number;
     private _followers     : number;
     private _gists         : number;
-    private _repoCount     : number = 0;
+    private _repoCount     : number;
     private _repositories = new Array<Repository>();
     constructor(id, username, contributions) {
         this._id = id;
@@ -20,10 +14,18 @@ export class Contributor {
         this._contributions = contributions;
     }
 
-    merge(contributorDetail: ContributorStats) {
-        this._repoCount = contributorDetail.repoCount;
-        this._gists = contributorDetail.gists;
+    merge(contributorDetail) {
+        this._repoCount = contributorDetail.public_repos;
+        this._gists = contributorDetail.public_gists;
         this._followers = contributorDetail.followers;
+    }
+
+    mergeContributor(contributor: Contributor) {
+        if (!contributor.isNotComplete()) {
+            this._repoCount = contributor.repoCount;
+            this._followers = contributor.followers;
+            this._gists = contributor.gists;
+        }
     }
 
     get id() {
@@ -36,6 +38,10 @@ export class Contributor {
 
     get avatarUrl() {
         return `https://avatars3.githubusercontent.com/u/${this._id}?v=4`;
+    }
+
+    isNotComplete() {
+        return this._followers == null || this._gists == null || this._repoCount == null;
     }
 
     set contributions(contributions: number) {

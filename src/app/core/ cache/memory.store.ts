@@ -9,7 +9,6 @@ export class MemoryStorage implements Storage {
         if (!this.storage) {
             this.storage = new Map();
         }
-        console.log(this.storage);
     }
 
     clear(): void {

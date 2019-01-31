@@ -4,11 +4,13 @@ import { MaterialModule } from './material.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { SimpleListComponent } from './presentation-components/simple-list/simple-list.component';
+import { BusinessCardComponent } from './presentation-components/business-card/business-card.component';
 
 @NgModule({
     declarations: [
         SortableTableComponent,
-        SimpleListComponent
+        SimpleListComponent,
+        BusinessCardComponent
     ],
     imports: [
         BrowserModule,
@@ -18,6 +20,7 @@ import { SimpleListComponent } from './presentation-components/simple-list/simpl
     exports: [
         SortableTableComponent,
         SimpleListComponent,
+        BusinessCardComponent,
         MaterialModule
     ]
 })

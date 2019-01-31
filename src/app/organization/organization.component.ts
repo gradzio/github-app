@@ -18,12 +18,12 @@ import { StoreService } from '../core/state/store.service';
   templateUrl: './organization.component.html'
 })
 export class OrganizationComponent implements OnInit {
-
-  // repository = new Repository('bradlygreen/angular');
   organization = new Organization('angular');
-  contributors$: Observable<SortableCollection>;
+  contributorCollection = new SortableCollection({active: 'contributions', direction: 'desc'});
+  contributorCollection$: Observable<SortableCollection>;
   organization$: Observable<Organization>;
   repoCounter$: Observable<number>;
+  contributorCounter$: Observable<number>;
 
   constructor(public store: StoreService, private service: OrganizationService, private state: StateService, private router: Router) {}
 
@@ -32,12 +32,20 @@ export class OrganizationComponent implements OnInit {
     //   console.log(resp);
     // });
     this.repoCounter$ = this.store.repoCounter$;
+    this.contributorCounter$ = this.store.contributorCounter$;
     this.organization$ = this.store.organization$;
     // this.contributors$ = this.service.organization$.pipe(map(organization => new SortableCollection(organization.contributors)));
-    this.contributors$ = this.store.contributors$;
+    this.contributorCollection$ = this.store.organization$
+      .pipe(
+        map(organization => {
+          this.contributorCollection.items = organization.contributors;
+          return this.contributorCollection;
+        })
+      );
   }
 
   onItemSelected($event) {
+    this.store.loadContributorsPageSubject
     this.state.selectContributor($event);
     this.router.navigate(['/contributor']);
   }

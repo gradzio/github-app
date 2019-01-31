@@ -22,7 +22,7 @@ xdescribe('ContributorService', () => {
 
       it('should get contributor', () => {
          service.getOne(new Contributor(1, 'bradlygreen', 1)).subscribe(contributor => {
-            console.log(contributor.followers, contributor.repoCount);
+            // console.log(contributor.followers, contributor.repoCount);
          });
       });
 

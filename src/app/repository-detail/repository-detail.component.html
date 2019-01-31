@@ -1,1 +1,2 @@
+<app-business-card [item]="(repository$ | async)"></app-business-card>
 <app-sortable-table [collection]="(contributors$ | async)" (itemSelected)="onItemSelected($event)"></app-sortable-table>

@@ -1,1 +1,2 @@
+<app-business-card [item]="contributor$ | async"></app-business-card>
 <app-simple-list [items]="contributorRepos$ | async" (itemSelected)="onItemSelected($event)"></app-simple-list>

@@ -1,12 +1,19 @@
 import { SortDirection, Sort } from '@angular/material';
 import { Injectable } from '@angular/core';
 
-@Injectable()
 export class SortableCollection {
     private _sort: Sort;
     private _items = [];
     constructor(sort: Sort) {
         this._sort = sort;
+    }
+
+    paginate(pageSize: number) {
+        const start = 0;
+        const pages = [];
+        while(start + pageSize <= this.items.length) {
+
+        }
     }
 
     set items(items) {
@@ -18,7 +25,7 @@ export class SortableCollection {
     }
 
     private doSort() {
-        this._items.sort((a, b) => this._compare(a[this._sort.active], b[this._sort.active], this._sort.direction === 'asc'));
+        this._items.sort((a, b) => this._compare(a[this._sort.active] || -1, b[this._sort.active] || -1, this._sort.direction === 'asc'));
         return this._items;
     }
 

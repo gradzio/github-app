@@ -1,4 +1,4 @@
-import { Contributor, ContributorStats } from '../contributor/contributor.model';
+import { Contributor } from '../contributor/contributor.model';
 import { Repository } from '../repository/repository.model';
 
 export class Organization {
@@ -20,6 +20,9 @@ export class Organization {
     get contributors(): Contributor[] {
         return Object.values(this._contributors);
     }
+    get contributorNames(): string[] {
+        return Object.keys(this._contributors);
+    }
 
     private mergeContributors(contributor: Contributor) {
         if (this.hasContributor(contributor.username)) {
@@ -36,14 +39,21 @@ export class Organization {
         : new Contributor(contributorData.id, contributorData.login, 0);
     }
 
+    addRepoContributors(repository: Repository) {
+        repository.contributors.forEach(contributor => {
+            const orgContributor = this.hasContributor(contributor.username) ? this.getContributor(contributor.username) : contributor;
+            orgContributor.incrementContributions(contributor.contributions);
+            this._contributors[orgContributor.username] = orgContributor;
+        });
+    }
+
     addContributor(contributorData) {
         const orgContributor = this.firstOrCreateContributor(contributorData);
         orgContributor.incrementContributions(contributorData.contributions);
-        orgContributor.incrementRepoCount(1);
         this._contributors[orgContributor.username] = orgContributor;
     }
     
-    updateContributor(contributorUsername: string, contributorDetail: ContributorStats) {
+    updateContributor(contributorUsername: string, contributorDetail) {
         const contributor = this._contributors[contributorUsername];
         contributor.merge(contributorDetail);
         this._contributors[contributorUsername] = contributor;
@@ -57,7 +67,7 @@ export class Organization {
         return this._contributors[username];
     }
 
-    get repositories() {
+    get repositories(): Repository[] {
         return Object.values(this._repositories);
     }
 

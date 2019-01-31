@@ -22,7 +22,9 @@ export interface PaginationObject {
     first?: PaginatedLink
 }
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class LinkHeaderParser implements Parser {
     constructor() { }
     public parse(responseHeaders: HttpHeaders): PaginationObject {

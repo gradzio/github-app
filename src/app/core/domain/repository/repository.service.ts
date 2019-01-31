@@ -2,10 +2,12 @@ import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Repository } from './repository.model';
 import { Contributor } from '../contributor/contributor.model';
-import { expand, map, reduce, switchMap } from 'rxjs/operators';
+import { expand, map, reduce, switchMap, filter } from 'rxjs/operators';
 import { LinkHeaderParser } from '../../pagination/link-header.parser';
 import { PaginatedService } from '../../pagination/paginated.service';
 import { github } from 'src/config/github';
+import { SortableCollection } from '../../sortable.collection';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -21,11 +23,14 @@ export class RepositoryService extends PaginatedService {
         return this.client.get(`${baseUri}?per_page=${this.perPage}&page=${this.page}`, {
             headers: github.headers,
             observe: 'response'
-        })  
+        })
         .pipe(
             switchMap((resp:any) => this.getRemainingPages(resp, baseUri)),
+            // filter((response: any) => response.body),
             map((allResponses: any) => {
-                allResponses.forEach(response => {
+                allResponses
+                    .filter(response => response.body)
+                    .forEach(response => {
                     repository.addContributors(response.body.map(contributor => {
                         const contributorObject = new Contributor(contributor.id, contributor.login, contributor.contributions);
                         return contributorObject;

@@ -11,37 +11,28 @@
         <td>{{item.username}}</td>
       </tr>
 </table> -->
-<table *ngIf="collection && collection.items && collection.items.length else spinner" matSort matSortActive="contributions" matSortDirection="desc" (matSortChange)="sortData($event)">
+<table matSort matSortActive="contributions" matSortDirection="desc" (matSortChange)="sortData($event)">
+    <thead>
     <tr>
       <!-- <th>Avatar</th> -->
-      <th mat-sort-header="username">Username</th>
+      <th>Username</th>
       <th mat-sort-header="contributions">Contributions</th>
       <th mat-sort-header="repoCount">Public repos</th>
       <th mat-sort-header="followers">Followers</th>
       <th mat-sort-header="gists">Gists</th>
     </tr>
-  
-    <tr *ngFor="let item of collection?.items">
-      <!-- <td><img [src]="item.avatarUrl" height="50"/></td> -->
-      <td><button color="accent" (click)="onClicked(item)" mat-raised-button>{{item.username}}</button></td>
-      <td>{{item.contributions}}</td>
-      <td>{{item.repoCount}}</td>
-      <td>{{item.followers}}</td>
-      <td>{{item.gists}}</td>
-    </tr>
-  </table>
+  </thead>
+    <tbody *ngIf="collection && collection.items && collection.items.length else spinner">
+      <tr *ngFor="let item of collection?.items">
+        <!-- <td><img [src]="item.avatarUrl" height="50"/></td> -->
+        <td><button color="accent" (click)="onClicked(item)" mat-raised-button>{{item.username}}</button></td>
+        <td>{{item.contributions}}</td>
+        <td>{{item.repoCount == null ? '?' : item.repoCount}}</td>
+        <td>{{item.followers == null ? '?' : item.followers}}</td>
+        <td>{{item.gists == null ? '?' : item.gists}}</td>
+      </tr>
+    </tbody>
+</table>
   <ng-template #spinner>
-    <table>
-        <tr>
-            <th>Username</th>
-            <th>Contributions</th>
-            <th>Public repos</th>
-            <th>Followers</th>
-            <th>Gists</th>
-          </tr>
-          <tbody>
-              <mat-spinner></mat-spinner>
-          </tbody>
-    </table>
+    <mat-spinner></mat-spinner>
   </ng-template>
-<!-- <mat-paginator [length]="dataSource.total$ | async" [pageSizeOptions]="[50, 100, 1000]"></mat-paginator> -->

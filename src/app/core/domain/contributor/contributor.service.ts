@@ -36,6 +36,25 @@ export class ContributorService extends PaginatedService {
         );
     }
 
+    getContributorsDetails(contributorNames: string[]) {
+        const firstName = contributorNames.shift();
+
+        return this.client.get<any>(`${github.baseUrl}/users/${firstName}`, {headers: github.headers, observe: 'response'})
+        .pipe(
+            switchMap( response => {
+                const allCalls$ = [of(response)];
+                contributorNames
+                    .forEach(contributorName => {
+                        allCalls$.push(this.client.get<any>(`${github.baseUrl}/users/${contributorName}`, {headers: github.headers, observe: 'response'}));
+                    });
+                return forkJoin(allCalls$);
+            }),
+            map((responses: any) => {
+                return responses.map(response => response.body);
+            })
+        )
+    }
+
     getRemainingPages(resp, baseUri) {
         return super.getRemainingPages(resp, baseUri);
     }

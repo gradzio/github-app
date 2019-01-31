@@ -6,26 +6,30 @@ import { StateService } from '../core/state/state.service';
 import { Router } from '@angular/router';
 import { SortableCollection } from '../core/sortable.collection';
 import { map } from 'rxjs/operators';
+import { ItemVM } from '../shared/presentation-components/item.viewmodel';
 
 @Component({
   selector: 'app-repository-detail',
   templateUrl: './repository-detail.component.html'
 })
 export class RepositoryDetailComponent implements OnInit {
-  repository$: Observable<Repository>;
+  repository$: Observable<ItemVM>;
   contributors$: Observable<SortableCollection>;
+  collection = new SortableCollection({active: 'contributions', direction: 'desc'});
   constructor(private service: RepositoryService, private state: StateService, private router: Router) { }
 
   ngOnInit() {
-    this.repository$ = this.state.repo$;
+    this.repository$ = this.state.repo$
+    .pipe(
+      map((repository: Repository) => {
+        return {title: repository.organization, subtitle: repository.name}
+      })
+    );
+    this.contributors$ = this.state.repoContributors$;
     this.state.repo$.subscribe(repo => {
       if (!repo) {
         this.router.navigate(['']);
       }
-      this.contributors$ = this.service.getRepoContributors(repo)
-        .pipe(
-          map(repo => new SortableCollection(repo.contributors))
-        );
     });
   }
 

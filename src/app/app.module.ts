@@ -1,4 +1,3 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -7,14 +6,12 @@ import { MemoryStorage } from './core/ cache/memory.store';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CacheInterceptor } from './core/ cache/cache.interceptor';
 import { OrganizationComponent } from './organization/organization.component';
-import { RouterModule } from '@angular/router';
 import { LinkHeaderParser } from './core/pagination/link-header.parser';
 import { RepositoryDetailComponent } from './repository-detail/repository-detail.component';
 import { ContributorDetailComponent } from './contributor-detail/contributor-detail.component';
 import { SharedModule } from './shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {NgForageModule, NgForageConfig, Driver, NgForage} from 'ngforage';
 import { StoreService } from './core/state/store.service';
 
 @NgModule({
@@ -30,12 +27,10 @@ import { StoreService } from './core/state/store.service';
     ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
-    SharedModule,
-    NgForageModule.forRoot(),
+    SharedModule
   ],
   providers: [
     MemoryStorage,
-    NgForage,
     LinkHeaderParser,
     StoreService,
     { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }

@@ -1,6 +1,11 @@
 
-<h1>{{organization.name}} # of repos: {{repoCounter$ | async}} / {{(organization$ | async)?.repositories.length}} with # of contributors: {{(organization$ | async)?.contributors.length}}</h1>
-<app-sortable-table *ngIf="(contributors$ | async) else spinner" [collection]="(contributors$ | async)" (itemSelected)="onItemSelected($event)"></app-sortable-table>
+<app-business-card [item]="{title: 'Organization: ' + organization.name}"></app-business-card>
+<mat-card>
+  <div>Loading {{repoCounter$ | async}} of {{(organization$ | async)?.repositories.length}} repos</div>
+  <div>Found: {{(organization$ | async)?.contributors.length}} contributors</div>
+  <div *ngIf="(organization$ | async)?.repositories.length > 0 && (repoCounter$ | async) == (organization$ | async)?.repositories.length">Loading {{contributorCounter$ | async}} of {{(organization$ | async)?.contributors.length}} contributor details</div>
+</mat-card>
+<app-sortable-table *ngIf="(organization$ | async) else spinner" [collection]="(contributorCollection$ | async)" (itemSelected)="onItemSelected($event)"></app-sortable-table>
 <ng-template #spinner>
   <mat-spinner></mat-spinner>
 </ng-template>
