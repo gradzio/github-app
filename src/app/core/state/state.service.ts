@@ -4,72 +4,120 @@ import { Injectable } from '@angular/core';
 import { SortableCollection } from '../sortable.collection';
 import { Repository } from '../domain/repository/repository.model';
 import { RepositoryService } from '../domain/repository/repository.service';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, filter } from 'rxjs/operators';
 import { StoreService } from './store.service';
+import { Organization } from '../domain/organization/organization.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class StateService {
-    private contributorSubject = new BehaviorSubject(null);
-    contributor$ = this.contributorSubject.asObservable();
+    private selectedOrganizationSubject = new BehaviorSubject(null);
+    selectedOrganization$ = this.selectedOrganizationSubject.asObservable();
 
-    private repoSubject = new BehaviorSubject(null);
-    repo$ = this.repoSubject.asObservable();
+    private selectedContributorSubject = new BehaviorSubject(null);
+    selectedContributor$ = this.selectedContributorSubject.asObservable();
 
-    private repoContributorsSubject = new BehaviorSubject(new SortableCollection({active: 'contributions', direction: 'desc'}));
-    repoContributors$ = this.repoContributorsSubject.asObservable();
+    private selectedRepoSubject = new BehaviorSubject(null);
+    selectedRepo$ = this.selectedRepoSubject.asObservable();
 
-    constructor(private store: StoreService, private repoService: RepositoryService) {
+    constructor(private store: StoreService) {
+        this.store.organization$
+            .pipe(
+                map(org => this.selectedOrganizationSubject.next(org))
+            )
+            .subscribe();
 
+        this.store.contributorDetails$
+            .pipe(
+                map(contributorDetails => {
+                    this.mergeRepoContributorDetails(contributorDetails);
+                    this.mergeOrgContributorDetails(contributorDetails);
+                    this.mergeContributorContributorDetails(contributorDetails);
+                })
+            ).subscribe();
+
+        this.store.contributor$
+            .pipe(
+                filter(contributor => contributor.isEqual(this.selectedContributorSubject.getValue())),
+                map(contributor => this.selectedContributorSubject.next(contributor))
+            ).subscribe();
+
+        this.store.repository$
+            .pipe(
+                // filter(repository => repository.isEqual(this.selectedRepoSubject.getValue())),
+                map(repository => this.selectedRepoSubject.next(repository))
+            ).subscribe();
+        
+            // zip(
+            //     this.store.repository$,
+            //     this.store.contributorDetails$
+            // ).pipe(
+            //     // filter(contributorsZip => contributorsZip[0].isEqual(this.selectedRepoSubject.getValue())),
+            //     map(contributorsZip => {
+            //         const repo = contributorsZip[0];
+            //         const contributorDetails = contributorsZip[1];
+            //         this.selectedRepoSubject.next(repo);
+                    
+            //         this.mergeRepoContributorDetails(contributorDetails);
+
+            //         // const missingContributors = repo.contributors.filter(contributor => contributorDetails[contributor.username] == null);
+            //         // this.store.fetchContributorDetails(missingContributors.map(contrib => contrib.username));
+            //     })
+            // ).subscribe();
     }
-    // private contributorReposSubject = new BehaviorSubject([]);
-    // contributorRepos$: Observable<SortableCollection> = this.contributorReposSubject.asObservable();
+
     selectContributor(contributor: Contributor) {
-        this.contributorSubject.next(contributor);
-        // this.contributorReposSubject.next(new SortableCollection(contributor.repositories));
+        this.selectedContributorSubject.next(contributor);
+        this.store.fetchContributorRepos(contributor);
+    }
+
+    selectOrganization(organization: Organization) {
+        this.selectedOrganizationSubject.next(organization);
+        this.store.fetchOrganization(organization);
     }
 
     selectRepo(repo: Repository) {
-        this.repoSubject.next(repo);
-        zip(
-            this.repoService.getRepoContributors(repo),
-            this.store.contributorDetails$
-        ).pipe(
-            map(contributorsZip => {
-                const repo = contributorsZip[0];
-                const contributorDetails = contributorsZip[1];
-                const contribs = repo.contributors.map(contributor => {
-                    const contributorDetail = contributorDetails[contributor.username];
-                    if (contributorDetail) {
-                        contributor.merge(contributorDetail);
-                    }
-                    return contributor;
-                });
-                const collection = this.repoContributorsSubject.getValue();
-                collection.items = contribs;
-                this.repoContributorsSubject.next(collection);
-                const missingContributors = repo.contributors.filter(contributor => contributorDetails[contributor.username] == null);
-                // console.log('missingContributors', missingContributors);
-                this.store.fetchContributorDetails(missingContributors.map(contrib => contrib.username));
-            })
-        ).subscribe();
+        this.selectedRepoSubject.next(repo);
+        this.store.fetchRepositoryContributors(repo);
+    }
 
-        this.store.contributorDetails$
-            .subscribe(contributorDetails => {
-                const repo = this.repoSubject.getValue();
-                if (repo) {
-                    const contribs = repo.contributors.map(contributor => {
-                        const contributorDetail = contributorDetails[contributor.username];
-                        if (contributorDetail) {
-                            contributor.merge(contributorDetail);
-                        }
-                        return contributor;
-                    });
-                    const collection = this.repoContributorsSubject.getValue();
-                    collection.items = contribs;
-                    this.repoContributorsSubject.next(collection);
+    private mergeRepoContributorDetails(contributorDetails) {
+        const repo = this.selectedRepoSubject.getValue();
+        if (repo) {
+            const contribs = repo.contributors.map(contributor => {
+                const contributorDetail = contributorDetails[contributor.username];
+                if (contributorDetail) {
+                    contributor.merge(contributorDetail);
+                }
+                return contributor;
+            });
+            repo.addContributors(contribs);
+            this.selectedRepoSubject.next(repo);
+        }
+    }
+
+    private mergeOrgContributorDetails(contributorDetails) {
+        const org = this.selectedOrganizationSubject.getValue();
+        if (org) {
+            org.contributors.forEach(contributor => {
+                const contributorDetail = contributorDetails[contributor.username];
+                if (contributorDetail) {
+                    org.updateContributor(contributor.username, contributorDetail);
+                    this.selectedOrganizationSubject.next(org);
                 }
             });
+        }
+    }
+
+    private mergeContributorContributorDetails(contributorDetails) {
+        const contributor = this.selectedContributorSubject.getValue();
+        if (contributor) {
+            const contributorDetail = contributorDetails[contributor.username];
+            if (contributorDetail) {
+                contributor.merge(contributorDetail);
+                this.selectedContributorSubject.next(contributor);
+            }
+        }
     }
 }

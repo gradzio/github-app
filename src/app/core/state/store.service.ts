@@ -27,57 +27,75 @@ enum EventType {
     providedIn: 'root'
 })
 export class StoreService {
-    private organizationSubject = new BehaviorSubject(new Organization('angular'));
-    organization$ = this.organizationSubject.asObservable();
-    repoEventsSubject = new Subject<Event>();
+    private orgEventsSubject = new Subject<Event>();
+    orgEvents$: Observable<Event> = this.orgEventsSubject.asObservable();
+    private repoEventsSubject = new Subject<Event>();
     repoEvents$: Observable<Event> = this.repoEventsSubject.asObservable();
-    contributorEventsSubject = new Subject<Event>();
+    private contributorEventsSubject = new Subject<Event>();
     contributorEvents$: Observable<Event> = this.contributorEventsSubject.asObservable();
-    // contributorsSubject = new BehaviorSubject<SortableCollection>(new SortableCollection({active: 'contributions', direction: 'desc'}));
-    // contributors$ = this.contributorsSubject.asObservable();
-    contributorDetailsToBeFetched = [];
-    contributorDetailsSubject = new BehaviorSubject({});
+    private detailEventsSubject = new Subject<Event>();
+    detailEvents$ = this.detailEventsSubject.asObservable();
+
+    private organizationSubject = new BehaviorSubject<Organization>(null);
+    organization$ = this.organizationSubject.asObservable();
+    private contributorSubject = new Subject<Contributor>();
+    contributor$ = this.contributorSubject.asObservable();
+    private repositorySubject = new Subject<Repository>();
+    repository$: Observable<Repository> = this.repositorySubject.asObservable();
+    private contributorDetailsSubject = new BehaviorSubject({});
     contributorDetails$ = this.contributorDetailsSubject.asObservable();
-    repoCounterSubject = new BehaviorSubject(0);
-    repoCounter$ = this.repoCounterSubject.asObservable();
-    contributorCounterSubject = new BehaviorSubject(0);
-    contributorCounter$ = this.contributorCounterSubject.asObservable();
-    loadContributorsPageSubject = new BehaviorSubject(false);
-    loadContributorsPage$ = this.loadContributorsPageSubject.asObservable();
+    
+    contributorDetailsToBeFetched = [];
+    // repoCounterSubject = new BehaviorSubject(0);
+    // repoCounter$ = this.repoCounterSubject.asObservable();
+    // contributorCounterSubject = new BehaviorSubject(0);
+    // contributorCounter$ = this.contributorCounterSubject.asObservable();
     contributorPageSize = 50;
     onPage = 0;
     perPage = 100;
     page = 1;
     constructor(private orgService: OrganizationService, private repoService: RepositoryService, private contributorService: ContributorService) {
-        const organization = this.organizationSubject.getValue();
-        this.orgService.getOrganizationRepos(organization)
-        .pipe(
-            map((organization: Organization) => {
-                this.organizationSubject.next(organization);
-                organization.repositories.forEach(repo => {
-                    this.repoEventsSubject.next({type: EventType.NEW, name: repo.fullName, data: repo});
-                });
-            })
-        ).subscribe();
+        this.orgEvents$.subscribe((orgEvent: Event) => {
+            this.orgService.getOrganizationRepos(orgEvent.data)
+            .pipe(
+                map((organization: Organization) => {
+                    this.organizationSubject.next(organization);
+                    organization.repositories.forEach(repo => {
+                        this.repoEventsSubject.next({type: EventType.NEW, name: repo.fullName, data: repo});
+                    });
+                })
+            ).subscribe();
+        });
+
+        this.contributorEvents$.subscribe(contributorEvent => {
+            this.contributorService.getContributorRepos(contributorEvent.data)
+                .pipe(
+                    map(contributor => {
+                        this.contributorSubject.next(contributor);
+                    })
+                ).subscribe();
+        });
 
         this.repoEvents$.subscribe(repoEvent => {
             this.repoService.getRepoContributors(repoEvent.data)
                 .pipe(
                     map(repository => {
-                        this.repoCounterSubject.next(this.repoCounterSubject.getValue() + 1);
+                        this.repositorySubject.next(repository);
+                        // this.repoCounterSubject.next(this.repoCounterSubject.getValue() + 1);
                         const organization = this.organizationSubject.getValue();
                         organization.addRepoContributors(repository);
                         this.organizationSubject.next(organization);
-                        if (organization.repositories.length - 1 === this.repoCounterSubject.getValue()) {
+                        // if (organization.repositories.length - 1 === this.repoCounterSubject.getValue()) {
+                        if (organization.contributorNames.length > 50 && this.onPage < 1) {
                             this.contributorDetailsToBeFetched = organization.contributorNames;
-                            // this.contributorDetailsSubject.next(organization.contributors);
-                            this.loadContributorsPageSubject.next(true);
+                            this.detailEventsSubject.next({type: EventType.NEW, name: 'details'});
+                            this.onPage++;
                         }
                     })
                 ).subscribe();
         });
 
-        this.loadContributorsPage$.subscribe(needsNewPage => {
+        this.detailEvents$.subscribe(needsNewPage => {
             if (needsNewPage && this.contributorDetailsToBeFetched.length > 0) {
                 const contributorsChunk = this.contributorDetailsToBeFetched.slice(0, this.contributorPageSize);
                 this.contributorService.getContributorsDetails(contributorsChunk)
@@ -85,25 +103,45 @@ export class StoreService {
                         map((contributorDetails) => {
                             const details = this.contributorDetailsSubject.getValue();
                             contributorDetails.forEach(contributorDetail => {
-                                const organization = this.organizationSubject.getValue();
                                 details[contributorDetail.login] = contributorDetail;
-                                if (organization.hasContributor(contributorDetail.login)) {
-                                    organization.updateContributor(contributorDetail.login, contributorDetail);
-                                }
                             });
                             this.contributorDetailsSubject.next(details);
-                            this.contributorCounterSubject.next(this.contributorCounterSubject.getValue() + contributorDetails.length);
+                            // this.contributorCounterSubject.next(this.contributorCounterSubject.getValue() + contributorDetails.length);
                             return details;
                         })
                     ).subscribe(details => {
                             this.contributorDetailsToBeFetched = this.contributorDetailsToBeFetched.filter(contributorName => Object.keys(details).indexOf(contributorName) == -1);
-                            if (this.contributorDetailsToBeFetched.length > 0) {
-                                // console.log('left: ' + this.contributorDetailsToBeFetched.length);
-                                this.loadContributorsPageSubject.next(true);
+                            if (this.contributorDetailsToBeFetched.length > 0 && this.onPage === 0) {
+                                this.detailEventsSubject.next({type: EventType.NEW, name: 'details'});
+                                this.onPage++;
                             }
                         }, error => console.log('oops', error)
                     );
             }
+        });
+     }
+
+     fetchRepositoryContributors(repo: Repository) {
+         this.repoEventsSubject.next({
+             type: EventType.NEW,
+             name: repo.fullName,
+             data: repo
+         });
+     }
+
+     fetchContributorRepos(contributor: Contributor) {
+        this.contributorEventsSubject.next({
+            type: EventType.NEW,
+            name: contributor.username,
+            data: contributor
+        });
+     }
+
+     fetchOrganization(organization: Organization) {
+         this.orgEventsSubject.next({
+            type: EventType.NEW,
+            name: organization.name,
+            data: organization
         });
      }
 
@@ -112,7 +150,7 @@ export class StoreService {
         contributorNames = contributorNames.filter(contributorName => fetchedContributorNames.indexOf(contributorName) == -1);
         if (contributorNames.length > 0) {
             this.contributorDetailsToBeFetched = [...contributorNames, ...this.contributorDetailsToBeFetched.filter(contributorName => contributorNames.indexOf(contributorName) == -1 )];
-            this.loadContributorsPageSubject.next(true);
+            this.detailEventsSubject.next({type: EventType.NEW, name: 'details'});
         }
      }
 }

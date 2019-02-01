@@ -9,6 +9,10 @@ export class Organization {
         this._name = name;
     }
 
+    isEqual(organization: Organization): boolean {
+        return this._name == organization.name;
+    }
+
     get name() {
         return this._name;
     }

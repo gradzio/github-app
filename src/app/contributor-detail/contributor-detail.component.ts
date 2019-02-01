@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StateService } from '../core/state/state.service';
 import { ItemVM } from '../shared/presentation-components/item.viewmodel';
 import { StoreService } from '../core/state/store.service';
+import { Repository } from '../core/domain/repository/repository.model';
 
 @Component({
   selector: 'app-contributor-detail',
@@ -15,13 +16,13 @@ import { StoreService } from '../core/state/store.service';
 })
 export class ContributorDetailComponent implements OnInit {
 
-  contributor$: Observable<ItemVM>;
-  contributorRepos$;
+  contributorVM$: Observable<ItemVM>;
+  contributorRepos$: Observable<Repository[]>;
   
-  constructor(private service: ContributorService, private state: StateService, private router: Router) { }
+  constructor(private state: StateService, private router: Router) { }
 
   ngOnInit() {
-    this.contributor$ = this.state.contributor$
+    this.contributorVM$ = this.state.selectedContributor$
       .pipe(
         map((contributor: Contributor) => {
           const details = [];
@@ -37,11 +38,14 @@ export class ContributorDetailComponent implements OnInit {
           return {image: contributor.avatarUrl, title: contributor.username, details}
         })
       );
-    this.state.contributor$.subscribe(contributor => {
+      this.contributorRepos$ = this.state.selectedContributor$
+        .pipe(
+          map((contributor: Contributor) => contributor.repositories)
+        );
+    this.state.selectedContributor$.subscribe(contributor => {
       if (!contributor) {
-        this.router.navigate(['']);
+        return this.router.navigate(['']);
       }
-      this.contributorRepos$ = this.service.getContributorRepos(contributor)
     });
   }
 

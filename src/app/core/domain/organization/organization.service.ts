@@ -14,10 +14,7 @@ import { github } from 'src/config/github';
 @Injectable({
     providedIn: 'root'
 })
-export class OrganizationService extends PaginatedService{
-    organizationSubject = new BehaviorSubject(new Organization('angular'));
-    organization$ = this.organizationSubject.asObservable();
-
+export class OrganizationService extends PaginatedService {
     protected perPage;
     protected page;
     constructor(protected client: HttpClient, protected parser: LinkHeaderParser) {

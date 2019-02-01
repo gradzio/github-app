@@ -19,19 +19,18 @@ export class ContributorService extends PaginatedService {
         super(client, parser);
     }
 
-    getContributorRepos(contributor: Contributor): Observable<Repository[]> {
+    getContributorRepos(contributor: Contributor): Observable<Contributor> {
         const baseUri = `${github.baseUrl}/users/${contributor.username}/repos`;
         return this.client.get<any>(`${baseUri}?page=${this.page}&per_page=${this.perPage}`, { headers: github.headers, observe: 'response'})
         .pipe(
             switchMap((resp:any) => this.getRemainingPages(resp, baseUri)),
             map((allResponses: any) => {
-                const repos = [];
                 allResponses
                 .filter(response => response.body)
                 .forEach(response => {
-                    response.body.forEach(repo => repos.push(new Repository(repo.full_name)));
+                    response.body.forEach(repo => contributor.addRepository(new Repository(repo.full_name)));
                 });
-                return repos;
+                return contributor;
             })
         );
     }

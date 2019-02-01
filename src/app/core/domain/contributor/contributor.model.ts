@@ -14,6 +14,10 @@ export class Contributor {
         this._contributions = contributions;
     }
 
+    isEqual(contributor: Contributor): boolean {
+        return this._id == contributor.id && this._username == contributor.username;
+    }
+
     merge(contributorDetail) {
         this._repoCount = contributorDetail.public_repos;
         this._gists = contributorDetail.public_gists;

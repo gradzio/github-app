@@ -25,17 +25,14 @@ export class OrganizationComponent implements OnInit {
   repoCounter$: Observable<number>;
   contributorCounter$: Observable<number>;
 
-  constructor(public store: StoreService, private service: OrganizationService, private state: StateService, private router: Router) {}
+  constructor(private state: StateService, private router: Router) {}
 
   ngOnInit() {
-    // this.service.getRepoContributors(this.repository).subscribe(resp => {
-    //   console.log(resp);
-    // });
-    this.repoCounter$ = this.store.repoCounter$;
-    this.contributorCounter$ = this.store.contributorCounter$;
-    this.organization$ = this.store.organization$;
-    // this.contributors$ = this.service.organization$.pipe(map(organization => new SortableCollection(organization.contributors)));
-    this.contributorCollection$ = this.store.organization$
+    this.state.selectOrganization(this.organization);
+    // this.repoCounter$ = this.store.repoCounter$;
+    // this.contributorCounter$ = this.store.contributorCounter$;
+    this.organization$ = this.state.selectedOrganization$;
+    this.contributorCollection$ = this.state.selectedOrganization$
       .pipe(
         map(organization => {
           this.contributorCollection.items = organization.contributors;
@@ -45,7 +42,6 @@ export class OrganizationComponent implements OnInit {
   }
 
   onItemSelected($event) {
-    this.store.loadContributorsPageSubject
     this.state.selectContributor($event);
     this.router.navigate(['/contributor']);
   }
