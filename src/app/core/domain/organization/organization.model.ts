@@ -94,7 +94,7 @@ export class Organization {
         return Object.values(this._reposWithContributors).length;
     }
 
-    get hasLoadedAllrepos(): boolean {
+    get hasLoadedAllRepos(): boolean {
         return this.reposLoadedCount > 0 && this.reposLoadedCount == this.repositories.length;
     }
 
@@ -102,7 +102,7 @@ export class Organization {
         return Object.values(this._contributorsWithDetails).length;
     }
 
-    get hasLoadedAlldetails(): boolean {
+    get hasLoadedAllDetails(): boolean {
         return this.contributorDetailsLoadedCount > 0 && this.contributorDetailsLoadedCount == this.contributors.length;
     }
 

@@ -3,7 +3,7 @@
 <mat-card>
   <div>Loading {{(organization$ | async)?.reposLoadedCount}} of {{(organization$ | async)?.repositories.length}} repos</div>
   <div>Found: {{(organization$ | async)?.contributors.length}} contributors</div>
-  <div *ngIf="(organization$ | async)?.hasLoadedAllrepos">Loading {{(organization$ | async)?.contributorDetailsLoadedCount}} of {{(organization$ | async)?.contributors.length}} contributor details</div>
+  <div *ngIf="(organization$ | async)?.hasLoadedAllRepos">Loading {{(organization$ | async)?.contributorDetailsLoadedCount}} of {{(organization$ | async)?.contributors.length}} contributor details</div>
 </mat-card>
 <app-sortable-table *ngIf="(organization$ | async) else spinner" [collection]="(contributorCollection$ | async)" (itemSelected)="onItemSelected($event)"></app-sortable-table>
 <ng-template #spinner>

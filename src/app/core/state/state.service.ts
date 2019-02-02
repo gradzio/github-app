@@ -24,11 +24,8 @@ export class StateService {
     constructor(private store: StoreService) {
         this.store.organization$
             .pipe(
-                filter(org => org !== null),
+                // filter(org => org !== null),
                 map(org => {
-                    if (org.hasLoadedAllrepos) {
-                        this.store.fetchContributorDetails(org.contributorNames);
-                    }
                     this.selectedOrganizationSubject.next(org)
                 })
             )
@@ -46,13 +43,33 @@ export class StateService {
         this.store.contributor$
             .pipe(
                 filter(contributor => contributor.isEqual(this.selectedContributorSubject.getValue())),
-                map(contributor => this.selectedContributorSubject.next(contributor))
+                map(contributor => {
+                    this.selectedContributorSubject.next(contributor);
+                    if (contributor.isNotComplete()) {
+                        this.store.fetchContributorDetails([contributor.username]);
+                    }
+                })
             ).subscribe();
 
         this.store.repository$
             .pipe(
-                // filter(repository => repository.isEqual(this.selectedRepoSubject.getValue())),
-                map(repository => this.selectedRepoSubject.next(repository))
+                map(repository => {
+                    if (repository.isEqual(this.selectedRepoSubject.getValue())) {
+                        this.selectedRepoSubject.next(repository);
+                        if (!repository.hasLoadedAllDetails) {
+                            this.store.fetchContributorDetails(repository.contributorsWithoutDetailNames);
+                        }
+                    }
+                    
+                    const organization = this.selectedOrganizationSubject.getValue();
+                    if (repository.isPartOfOrganization(organization)) {
+                        organization.addRepoContributors(repository);
+                        this.selectedOrganizationSubject.next(organization);
+                        if (organization.hasLoadedAllRepos) {
+                            this.store.fetchContributorDetails(organization.contributorNames);
+                        }
+                    }
+                })
             ).subscribe();
     }
 

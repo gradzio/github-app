@@ -36,7 +36,7 @@ export class StoreService {
     private detailEventsSubject = new Subject<Event>();
     detailEvents$ = this.detailEventsSubject.asObservable();
 
-    private organizationSubject = new BehaviorSubject<Organization>(null);
+    private organizationSubject = new Subject<Organization>();
     organization$ = this.organizationSubject.asObservable();
     private contributorSubject = new Subject<Contributor>();
     contributor$ = this.contributorSubject.asObservable();
@@ -46,7 +46,7 @@ export class StoreService {
     contributorDetails$ = this.contributorDetailsSubject.asObservable();
     
     contributorDetailsToBeFetched = [];
-    
+
     contributorPageSize = 50;
     onPage = 0;
     perPage = 100;
@@ -71,8 +71,6 @@ export class StoreService {
                         const contributorDetail = this.contributorDetailsSubject.getValue()[contributor.username];
                         if (contributorDetail) {
                             contributor.merge(contributorDetail);
-                        } else {
-                            this.fetchContributorDetails([contributor.username]);
                         }
                         this.contributorSubject.next(contributor);
                     })
@@ -85,11 +83,6 @@ export class StoreService {
                     map(repository => {
                         repository.mergeContributorDetails(this.contributorDetailsSubject.getValue());
                         this.repositorySubject.next(repository);
-                        
-                        // TODO: Find a better way
-                        const organization = this.organizationSubject.getValue();
-                        organization.addRepoContributors(repository);
-                        this.organizationSubject.next(organization);
                     })
                 ).subscribe();
         });
@@ -105,7 +98,6 @@ export class StoreService {
                                 details[contributorDetail.login] = contributorDetail;
                             });
                             this.contributorDetailsSubject.next(details);
-                            // this.contributorCounterSubject.next(this.contributorCounterSubject.getValue() + contributorDetails.length);
                             return details;
                         })
                     ).subscribe(details => {
