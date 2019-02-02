@@ -1,9 +1,9 @@
 
 <app-business-card [item]="{title: 'Organization: ' + organization.name}"></app-business-card>
 <mat-card>
-  <div>Loading {{repoCounter$ | async}} of {{(organization$ | async)?.repositories.length}} repos</div>
+  <div>Loading {{(organization$ | async)?.reposLoadedCount}} of {{(organization$ | async)?.repositories.length}} repos</div>
   <div>Found: {{(organization$ | async)?.contributors.length}} contributors</div>
-  <div *ngIf="(organization$ | async)?.repositories.length > 0 && (repoCounter$ | async) == (organization$ | async)?.repositories.length">Loading {{contributorCounter$ | async}} of {{(organization$ | async)?.contributors.length}} contributor details</div>
+  <div *ngIf="(organization$ | async)?.hasLoadedAllrepos">Loading {{(organization$ | async)?.contributorDetailsLoadedCount}} of {{(organization$ | async)?.contributors.length}} contributor details</div>
 </mat-card>
 <app-sortable-table *ngIf="(organization$ | async) else spinner" [collection]="(contributorCollection$ | async)" (itemSelected)="onItemSelected($event)"></app-sortable-table>
 <ng-template #spinner>

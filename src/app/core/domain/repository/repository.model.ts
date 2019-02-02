@@ -1,4 +1,5 @@
 import { Contributor } from '../contributor/contributor.model';
+import { ContributorDetail } from '../contributor-details/contributor-detail.model';
 
 export class Repository {
     private _organization : string;
@@ -24,6 +25,12 @@ export class Repository {
 
     get fullName() {
         return this._organization + '/' + this._name;
+    }
+
+    mergeContributorDetails(contributorDetails) {
+        this.contributors
+            .filter(contributor => contributorDetails[contributor.username])
+            .forEach(contributor => this._contributors[contributor.username].merge(contributorDetails[contributor.username]));
     }
 
     addContributors(contributors) {

@@ -4,7 +4,9 @@ import { Repository } from '../repository/repository.model';
 export class Organization {
     private _name        : string;
     private _contributors = {};
+    private _contributorsWithDetails = {};
     private _repositories = {};
+    private _reposWithContributors = {};
     constructor(name: string) {
         this._name = name;
     }
@@ -37,6 +39,16 @@ export class Organization {
         return contributor;
     }
 
+    mergeContributorDetails(contributorDetails) {
+        this.contributors.forEach(contributor => {
+            const contributorDetail = contributorDetails[contributor.username];
+            if (contributorDetail) {
+                this.updateContributor(contributor.username, contributorDetail);
+                this._contributorsWithDetails[contributor.username] = contributor;
+            }
+        });
+    }
+
     private firstOrCreateContributor(contributorData) {
         return this.hasContributor(contributorData.login)
         ? this.getContributor(contributorData.login)
@@ -44,11 +56,14 @@ export class Organization {
     }
 
     addRepoContributors(repository: Repository) {
-        repository.contributors.forEach(contributor => {
-            const orgContributor = this.hasContributor(contributor.username) ? this.getContributor(contributor.username) : contributor;
-            orgContributor.incrementContributions(contributor.contributions);
-            this._contributors[orgContributor.username] = orgContributor;
-        });
+        if (repository.organization === this._name) {
+            repository.contributors.forEach(contributor => {
+                const orgContributor = this.hasContributor(contributor.username) ? this.getContributor(contributor.username) : contributor;
+                orgContributor.incrementContributions(contributor.contributions);
+                this._contributors[orgContributor.username] = orgContributor;
+            });
+            this._reposWithContributors[repository.fullName] = repository;
+        }
     }
 
     addContributor(contributorData) {
@@ -73,6 +88,22 @@ export class Organization {
 
     get repositories(): Repository[] {
         return Object.values(this._repositories);
+    }
+
+    get reposLoadedCount(): number {
+        return Object.values(this._reposWithContributors).length;
+    }
+
+    get hasLoadedAllrepos(): boolean {
+        return this.reposLoadedCount > 0 && this.reposLoadedCount == this.repositories.length;
+    }
+
+    get contributorDetailsLoadedCount(): number {
+        return Object.values(this._contributorsWithDetails).length;
+    }
+
+    get hasLoadedAlldetails(): boolean {
+        return this.contributorDetailsLoadedCount > 0 && this.contributorDetailsLoadedCount == this.contributors.length;
     }
 
     addRepository(repository: Repository) {

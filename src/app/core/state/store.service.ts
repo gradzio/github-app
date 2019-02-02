@@ -46,10 +46,7 @@ export class StoreService {
     contributorDetails$ = this.contributorDetailsSubject.asObservable();
     
     contributorDetailsToBeFetched = [];
-    // repoCounterSubject = new BehaviorSubject(0);
-    // repoCounter$ = this.repoCounterSubject.asObservable();
-    // contributorCounterSubject = new BehaviorSubject(0);
-    // contributorCounter$ = this.contributorCounterSubject.asObservable();
+    
     contributorPageSize = 50;
     onPage = 0;
     perPage = 100;
@@ -71,6 +68,12 @@ export class StoreService {
             this.contributorService.getContributorRepos(contributorEvent.data)
                 .pipe(
                     map(contributor => {
+                        const contributorDetail = this.contributorDetailsSubject.getValue()[contributor.username];
+                        if (contributorDetail) {
+                            contributor.merge(contributorDetail);
+                        } else {
+                            this.fetchContributorDetails([contributor.username]);
+                        }
                         this.contributorSubject.next(contributor);
                     })
                 ).subscribe();
@@ -80,17 +83,13 @@ export class StoreService {
             this.repoService.getRepoContributors(repoEvent.data)
                 .pipe(
                     map(repository => {
+                        repository.mergeContributorDetails(this.contributorDetailsSubject.getValue());
                         this.repositorySubject.next(repository);
-                        // this.repoCounterSubject.next(this.repoCounterSubject.getValue() + 1);
+                        
+                        // TODO: Find a better way
                         const organization = this.organizationSubject.getValue();
                         organization.addRepoContributors(repository);
                         this.organizationSubject.next(organization);
-                        // if (organization.repositories.length - 1 === this.repoCounterSubject.getValue()) {
-                        if (organization.contributorNames.length > 50 && this.onPage < 1) {
-                            this.contributorDetailsToBeFetched = organization.contributorNames;
-                            this.detailEventsSubject.next({type: EventType.NEW, name: 'details'});
-                            this.onPage++;
-                        }
                     })
                 ).subscribe();
         });

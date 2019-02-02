@@ -12,7 +12,7 @@ import { Organization } from '../domain/organization/organization.model';
     providedIn: 'root'
 })
 export class StateService {
-    private selectedOrganizationSubject = new BehaviorSubject(null);
+    private selectedOrganizationSubject = new BehaviorSubject<Organization>(null);
     selectedOrganization$ = this.selectedOrganizationSubject.asObservable();
 
     private selectedContributorSubject = new BehaviorSubject(null);
@@ -24,7 +24,13 @@ export class StateService {
     constructor(private store: StoreService) {
         this.store.organization$
             .pipe(
-                map(org => this.selectedOrganizationSubject.next(org))
+                filter(org => org !== null),
+                map(org => {
+                    if (org.hasLoadedAllrepos) {
+                        this.store.fetchContributorDetails(org.contributorNames);
+                    }
+                    this.selectedOrganizationSubject.next(org)
+                })
             )
             .subscribe();
 
@@ -48,23 +54,6 @@ export class StateService {
                 // filter(repository => repository.isEqual(this.selectedRepoSubject.getValue())),
                 map(repository => this.selectedRepoSubject.next(repository))
             ).subscribe();
-        
-            // zip(
-            //     this.store.repository$,
-            //     this.store.contributorDetails$
-            // ).pipe(
-            //     // filter(contributorsZip => contributorsZip[0].isEqual(this.selectedRepoSubject.getValue())),
-            //     map(contributorsZip => {
-            //         const repo = contributorsZip[0];
-            //         const contributorDetails = contributorsZip[1];
-            //         this.selectedRepoSubject.next(repo);
-                    
-            //         this.mergeRepoContributorDetails(contributorDetails);
-
-            //         // const missingContributors = repo.contributors.filter(contributor => contributorDetails[contributor.username] == null);
-            //         // this.store.fetchContributorDetails(missingContributors.map(contrib => contrib.username));
-            //     })
-            // ).subscribe();
     }
 
     selectContributor(contributor: Contributor) {
@@ -100,13 +89,8 @@ export class StateService {
     private mergeOrgContributorDetails(contributorDetails) {
         const org = this.selectedOrganizationSubject.getValue();
         if (org) {
-            org.contributors.forEach(contributor => {
-                const contributorDetail = contributorDetails[contributor.username];
-                if (contributorDetail) {
-                    org.updateContributor(contributor.username, contributorDetail);
-                    this.selectedOrganizationSubject.next(org);
-                }
-            });
+            org.mergeContributorDetails(contributorDetails);
+            this.selectedOrganizationSubject.next(org);
         }
     }
 
