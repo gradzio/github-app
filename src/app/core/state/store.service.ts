@@ -1,13 +1,9 @@
-import { github } from 'src/config/github';
-import { BehaviorSubject, Subject, Observable, forkJoin, of, from } from 'rxjs';
+import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Organization } from '../domain/organization/organization.model';
-import { HttpClient } from '@angular/common/http';
 import { switchMap, map, flatMap, filter, mergeMap, retry } from 'rxjs/operators';
 import { Repository } from '../domain/repository/repository.model';
 import { Injectable } from '@angular/core';
 import { Contributor } from '../domain/contributor/contributor.model';
-import { SortableCollection } from '../sortable.collection';
-import { LinkHeaderParser } from '../pagination/link-header.parser';
 import { RepositoryService } from '../domain/repository/repository.service';
 import { OrganizationService } from '../domain/organization/organization.service';
 import { ContributorService } from '../domain/contributor/contributor.service';
@@ -87,8 +83,9 @@ export class StoreService {
                 ).subscribe();
         });
 
-        this.detailEvents$.subscribe(needsNewPage => {
-            if (needsNewPage && this.contributorDetailsToBeFetched.length > 0) {
+        this.detailEvents$.subscribe(detailsEvent => {
+            if (this.contributorDetailsToBeFetched.length > 0) {
+                // this.contributorDetailsToBeFetched = detailsEvent.data;
                 const contributorsChunk = this.contributorDetailsToBeFetched.slice(0, this.contributorPageSize);
                 this.contributorService.getContributorsDetails(contributorsChunk)
                     .pipe(
@@ -101,10 +98,9 @@ export class StoreService {
                             return details;
                         })
                     ).subscribe(details => {
-                            this.contributorDetailsToBeFetched = this.contributorDetailsToBeFetched.filter(contributorName => Object.keys(details).indexOf(contributorName) == -1);
-                            if (this.contributorDetailsToBeFetched.length > 0 && this.onPage === 0) {
+                            if (this.contributorDetailsToBeFetched.length > 0) {
+                                this.contributorDetailsToBeFetched = this.contributorDetailsToBeFetched.filter(contributorName => Object.keys(details).indexOf(contributorName) == -1);
                                 this.detailEventsSubject.next({type: EventType.NEW, name: 'details'});
-                                this.onPage++;
                             }
                         }, error => console.log('oops', error)
                     );
@@ -138,9 +134,9 @@ export class StoreService {
 
      fetchContributorDetails(contributorNames: string[]) {
         const fetchedContributorNames = Object.keys(this.contributorDetailsSubject.getValue());
-        contributorNames = contributorNames.filter(contributorName => fetchedContributorNames.indexOf(contributorName) == -1);
-        if (contributorNames.length > 0) {
-            this.contributorDetailsToBeFetched = [...contributorNames, ...this.contributorDetailsToBeFetched.filter(contributorName => contributorNames.indexOf(contributorName) == -1 )];
+        this.contributorDetailsToBeFetched = contributorNames.filter(contributorName => fetchedContributorNames.indexOf(contributorName) == -1);
+        if (this.contributorDetailsToBeFetched.length > 0) {
+            // this.contributorDetailsToBeFetched = [...contributorNames, ...this.contributorDetailsToBeFetched.filter(contributorName => contributorNames.indexOf(contributorName) == -1 )];
             this.detailEventsSubject.next({type: EventType.NEW, name: 'details'});
         }
      }

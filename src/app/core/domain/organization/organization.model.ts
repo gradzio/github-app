@@ -19,14 +19,10 @@ export class Organization {
         return this._name;
     }
 
-    get reposUrl() {
-        return `https://api.github.com/orgs/${this._name}/repos`;
-    }
-
     get contributors(): Contributor[] {
         return Object.values(this._contributors);
     }
-    get contributorNames(): string[] {
+    get contributorsWithoutDetailNames(): string[] {
         return Object.keys(this._contributors);
     }
 

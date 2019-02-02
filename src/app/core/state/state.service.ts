@@ -66,7 +66,7 @@ export class StateService {
                         organization.addRepoContributors(repository);
                         this.selectedOrganizationSubject.next(organization);
                         if (organization.hasLoadedAllRepos) {
-                            this.store.fetchContributorDetails(organization.contributorNames);
+                            this.store.fetchContributorDetails(organization.contributorsWithoutDetailNames);
                         }
                     }
                 })
@@ -76,6 +76,7 @@ export class StateService {
     selectContributor(contributor: Contributor) {
         this.selectedContributorSubject.next(contributor);
         this.store.fetchContributorRepos(contributor);
+        this.store.fetchContributorDetails([]);
     }
 
     selectOrganization(organization: Organization) {
