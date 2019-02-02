@@ -1,5 +1,4 @@
 import { Contributor } from '../contributor/contributor.model';
-import { ContributorDetail } from '../contributor-details/contributor-detail.model';
 import { Organization } from '../organization/organization.model';
 
 export class Repository {
@@ -11,6 +10,12 @@ export class Repository {
         const split = fullName.split('/');
         this._organization = split[0];
         this._name = split[1];
+    }
+
+    total(property: string): number {
+        return this.contributors
+        .map(contributor => contributor[property] || 0)
+        .reduce((a, b) => a + b, 0);
     }
 
     isEqual(repo?: Repository): boolean {

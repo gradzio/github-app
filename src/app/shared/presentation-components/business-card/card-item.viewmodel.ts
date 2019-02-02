@@ -1,4 +1,4 @@
-export interface ItemVM {
+export interface CardItemVM {
     image?: string;
     title: string;
     subtitle?: string;

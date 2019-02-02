@@ -6,8 +6,6 @@ import { expand, map, reduce, switchMap, filter } from 'rxjs/operators';
 import { LinkHeaderParser } from '../../pagination/link-header.parser';
 import { PaginatedService } from '../../pagination/paginated.service';
 import { github } from 'src/config/github';
-import { SortableCollection } from '../../sortable.collection';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'

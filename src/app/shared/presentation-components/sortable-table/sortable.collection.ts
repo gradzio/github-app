@@ -1,19 +1,10 @@
-import { SortDirection, Sort } from '@angular/material';
-import { Injectable } from '@angular/core';
+import { Sort } from '@angular/material'
 
 export class SortableCollection {
     private _sort: Sort;
     private _items = [];
     constructor(sort: Sort) {
         this._sort = sort;
-    }
-
-    paginate(pageSize: number) {
-        const start = 0;
-        const pages = [];
-        while(start + pageSize <= this.items.length) {
-
-        }
     }
 
     set items(items) {

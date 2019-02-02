@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ItemVM } from '../item.viewmodel';
+import { CardItemVM } from './card-item.viewmodel';
 
 @Component({
   selector: 'app-business-card',
@@ -8,7 +8,7 @@ import { ItemVM } from '../item.viewmodel';
 export class BusinessCardComponent implements OnInit {
 
   @Input()
-  item: ItemVM;
+  item: CardItemVM;
   
   constructor() { }
 

@@ -1,8 +1,6 @@
 import { Component, OnInit, Input, Output, ViewChild, AfterContentInit, OnChanges, AfterViewInit, EventEmitter } from '@angular/core';
-import { MatPaginator, MatSort, Sort } from '@angular/material';
-import { Contributor } from 'src/app/core/domain/contributor/contributor.model';
-import { SortableCollection } from 'src/app/core/sortable.collection';
-import { tap } from 'rxjs/operators';
+import { Sort } from '@angular/material';
+import { SortableCollection } from 'src/app/shared/presentation-components/sortable-table/sortable.collection';
 
 @Component({
   selector: 'app-sortable-table',

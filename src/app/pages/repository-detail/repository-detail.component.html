@@ -1,0 +1,2 @@
+<app-business-card [item]="(repositoryVM$ | async)?.card"></app-business-card>
+<app-sortable-table [collection]="(repositoryVM$ | async)?.collection" (itemSelected)="onItemSelected($event)"></app-sortable-table>

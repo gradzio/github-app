@@ -1,9 +1,7 @@
 import { Contributor } from '../domain/contributor/contributor.model';
 import { BehaviorSubject, Observable, forkJoin, of, zip } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { SortableCollection } from '../sortable.collection';
 import { Repository } from '../domain/repository/repository.model';
-import { RepositoryService } from '../domain/repository/repository.service';
 import { map, switchMap, filter } from 'rxjs/operators';
 import { StoreService } from './store.service';
 import { Organization } from '../domain/organization/organization.model';
@@ -24,7 +22,6 @@ export class StateService {
     constructor(private store: StoreService) {
         this.store.organization$
             .pipe(
-                // filter(org => org !== null),
                 map(org => {
                     this.selectedOrganizationSubject.next(org)
                 })
