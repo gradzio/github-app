@@ -1,4 +1,3 @@
-<app-business-card [item]="(repositoryVM$ | async)?.card"></app-business-card>
 <div fxLayout="row">
     <div fxFlex="100%" >
         <mat-card>
@@ -7,5 +6,8 @@
                 <app-sortable-table [tableData]="contributorData" (itemSelected)="onItemSelected($event)"></app-sortable-table>
             </mat-card-content>
         </mat-card>
-    </div>
-</div>
+        </div>
+      </div>
+<!-- <ng-template #spinner>
+  <mat-spinner></mat-spinner>
+</ng-template> -->

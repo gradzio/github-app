@@ -1,38 +1,55 @@
-<!-- <div class="spinner-container" *ngIf="items?.length === 0">
-    <mat-spinner></mat-spinner>
-</div> -->
 
-<!-- <table mat-table matSort matSortActive="username" matSortDirection="{{sortDirection}}" matSortDisableClear>
-    <tr>
-        <th mat-sort-header="username">username</th>
-      </tr>
-    
-      <tr *ngFor="let item of collections.items">
-        <td>{{item.username}}</td>
-      </tr>
-</table> -->
-<table matSort matSortActive="contributions" matSortDirection="desc" (matSortChange)="sortData($event)">
-    <thead>
-    <tr>
-      <!-- <th>Avatar</th> -->
-      <th>Username</th>
-      <th mat-sort-header="contributions">Contributions</th>
-      <th mat-sort-header="repoCount">Public repos</th>
-      <th mat-sort-header="followers">Followers</th>
-      <th mat-sort-header="gists">Gists</th>
-    </tr>
-  </thead>
-    <tbody *ngIf="collection && collection.items && collection.items.length else spinner">
-      <tr *ngFor="let item of collection?.items">
-        <!-- <td><img [src]="item.avatarUrl" height="50"/></td> -->
-        <td><button color="accent" (click)="onClicked(item)" mat-raised-button>{{item.username}}</button></td>
-        <td>{{item.contributions}}</td>
-        <td>{{item.repoCount == null ? '?' : item.repoCount}}</td>
-        <td>{{item.followers == null ? '?' : item.followers}}</td>
-        <td>{{item.gists == null ? '?' : item.gists}}</td>
-      </tr>
-    </tbody>
-</table>
-  <ng-template #spinner>
+{{startPageIndex}}
+<table mat-table matSort matSortActive="contributions" matSortDirection="desc" (matSortChange)="sortData($event)" [dataSource]="dataSource">
+
+    <!-- Avatar Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef> # </th>
+      <td mat-cell *matCellDef="let element; let i = index;"> {{ i + pagePosition }}</td>
+    </ng-container>
+
+    <!-- Avatar Column -->
+    <ng-container matColumnDef="avatar">
+      <th mat-header-cell *matHeaderCellDef> Avatar </th>
+      <td mat-cell *matCellDef="let element"><img mat-card-avatar [src]="element.avatarUrl" height="48" /></td>
+    </ng-container>
+          
+    <!-- Name Column -->
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef> Username </th>
+      <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+    </ng-container>
+
+    <!-- Contributions Column -->
+    <ng-container matColumnDef="contributions">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Contributions </th>
+      <td mat-cell *matCellDef="let element"> {{element.contributions}} </td>
+    </ng-container>
+
+    <!-- Repositories Column -->
+    <ng-container matColumnDef="repos">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="repoCount"> Repos </th>
+        <td mat-cell *matCellDef="let element"> {{element.repoCount}} </td>
+    </ng-container>
+
+    <!-- Gists Column -->
+    <ng-container matColumnDef="gists">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Gists </th>
+        <td mat-cell *matCellDef="let element"> {{element.gists}} </td>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>  </th>
+        <td mat-cell *matCellDef="let element"><button color="accent" (click)="onClicked(element)" mat-icon-button><mat-icon>portrait</mat-icon></button> </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+
+<mat-paginator [pageSizeOptions]="[50, 100, 200]" showFirstLastButtons></mat-paginator>
+  <!-- <ng-template #spinner>
     <mat-spinner></mat-spinner>
-  </ng-template>
+  </ng-template> -->

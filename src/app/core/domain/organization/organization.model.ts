@@ -2,13 +2,20 @@ import { Contributor } from '../contributor/contributor.model';
 import { Repository } from '../repository/repository.model';
 
 export class Organization {
+    private _id : number;
     private _name        : string;
     private _contributors = {};
     private _contributorsWithDetails = {};
     private _repositories = {};
     private _reposWithContributors = {};
-    constructor(name: string) {
+    constructor(id: number, name: string) {
+        this._id = id;
         this._name = name;
+    }
+
+    // TODO: Move to VM
+    get avatarUrl() {
+        return `https://avatars3.githubusercontent.com/u/${this._id}?s=48`;
     }
 
     isEqual(organization: Organization): boolean {
@@ -84,6 +91,10 @@ export class Organization {
 
     get repositories(): Repository[] {
         return Object.values(this._repositories);
+    }
+
+    getRepository(repositoryName: string): Repository | null {
+        return this._repositories[repositoryName];
     }
 
     get reposLoadedCount(): number {

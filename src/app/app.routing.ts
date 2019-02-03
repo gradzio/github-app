@@ -5,6 +5,8 @@ import { RepositoryDetailComponent } from './pages/repository-detail/repository-
 import { ContributorDetailComponent } from './pages/contributor-detail/contributor-detail.component';
 import { RepositoryDetailResolverService } from './pages/repository-detail/repository-detail.resolver';
 import { ContributorDetailResolverService } from './pages/contributor-detail/contributor-detail.resolver';
+import { OrganizationContributorsComponent } from './pages/organization-contributors/organization-contributors.component';
+import { OrganizationReposComponent } from './pages/organization-repos/organization-repos.component';
 
 const routes: Routes = [
   {
@@ -12,11 +14,19 @@ const routes: Routes = [
     component: OrganizationDetailComponent
   },
   {
+    path: 'contributors',
+    component: OrganizationContributorsComponent
+  },
+  {
     path: 'contributor',
     component: ContributorDetailComponent,
     resolve: {
       contributor: ContributorDetailResolverService
     }
+  },
+  {
+    path: 'repos',
+    component: OrganizationReposComponent
   },
   {
     path: 'repo',

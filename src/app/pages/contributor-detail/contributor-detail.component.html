@@ -1,2 +1,12 @@
-<app-business-card [item]="(contributorVM$ | async)?.card"></app-business-card>
-<app-simple-list [items]="(contributorVM$ | async)?.collection.items" (itemSelected)="onItemSelected($event)"></app-simple-list>
+<div fxLayout="row">
+    <div fxFlex.gt-sm="100%" >
+        <app-business-card [item]="(contributorVM$ | async)?.card"></app-business-card>
+    </div>
+</div>
+<div fxLayout="row">
+    <div fxFlex.gt-sm="100%" >
+        <mat-card>
+            <app-simple-list [items]="(contributorVM$ | async)?.collection.items" (itemSelected)="onItemSelected($event)"></app-simple-list>
+        </mat-card>
+    </div>
+</div>

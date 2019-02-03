@@ -41,7 +41,7 @@ export class Contributor {
     }
 
     get avatarUrl() {
-        return `https://avatars3.githubusercontent.com/u/${this._id}?v=4`;
+        return `https://avatars3.githubusercontent.com/u/${this._id}?v=4&s=48`;
     }
 
     isNotComplete() {

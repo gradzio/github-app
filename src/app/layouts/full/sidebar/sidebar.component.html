@@ -1,0 +1,49 @@
+<!-- ============================================================== -->
+<!-- sidebar -->
+<!-- ============================================================== -->
+ <div class="user-profile" style="background: url(assets/images/background/mountains.jpg) no-repeat;">
+    <!-- User profile image -->
+    <div class="profile-img"> <img [src]="item.avatarUrl" alt="organization"> </div>
+    <!-- User profile text-->
+    <!-- ============================================================== -->
+    <!-- Profile - style you can find in header.scss -->
+    <!-- ============================================================== -->
+    <div class="profile-text"><a [matMenuTriggerFor]="sdprofile" class=""> {{item.name}} <i class="ti-angle-down font-12 m-l-5"></i></a></div>
+    <mat-menu #sdprofile="matMenu" class="mymegamenu">
+        <button mat-menu-item>
+            <mat-icon>settings</mat-icon> Settings </button>
+        <button mat-menu-item>
+            <mat-icon>account_box</mat-icon> Profile </button>
+        <button mat-menu-item>
+            <mat-icon>notifications_off</mat-icon> Disable notifications </button>
+        <button mat-menu-item>
+            <mat-icon>exit_to_app</mat-icon> Sign Out </button>
+    </mat-menu>
+    
+</div>
+<mat-nav-list>
+    <mat-list-item routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }">
+        <a class="" [routerLink]="['/']">
+            <mat-icon>home</mat-icon> 
+            <span>Dashboard</span> 
+            <span fxFlex></span>
+        </a>        
+    </mat-list-item>
+
+    <mat-list-item routerLinkActive="selected">
+        <a class="" [routerLink]="['/repos']">
+            <mat-icon>list</mat-icon> 
+            <span>Repositories</span>
+            <span fxFlex></span>
+        </a>        
+    </mat-list-item>
+
+    <mat-list-item routerLinkActive="selected">
+        <a class="" [routerLink]="['/contributors']">
+            <mat-icon>face</mat-icon> 
+            <span>Contributors</span>
+            <span fxFlex></span>
+        </a>        
+    </mat-list-item>
+
+</mat-nav-list>

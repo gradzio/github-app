@@ -13,7 +13,7 @@ export class StateService {
     private selectedOrganizationSubject = new BehaviorSubject<Organization>(null);
     selectedOrganization$ = this.selectedOrganizationSubject.asObservable();
 
-    private selectedContributorSubject = new BehaviorSubject(null);
+    private selectedContributorSubject = new BehaviorSubject<Contributor>(null);
     selectedContributor$ = this.selectedContributorSubject.asObservable();
 
     private selectedRepoSubject = new BehaviorSubject(null);
@@ -63,7 +63,7 @@ export class StateService {
                         organization.addRepoContributors(repository);
                         this.selectedOrganizationSubject.next(organization);
                         if (organization.hasLoadedAllRepos) {
-                            this.store.fetchContributorDetails(organization.contributorsWithoutDetailNames);
+                            // this.store.fetchContributorDetails(organization.contributorsWithoutDetailNames);
                         }
                     }
                 })

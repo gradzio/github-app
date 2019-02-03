@@ -14,14 +14,13 @@ import { BusinessCardComponent } from './presentation-components/business-card/b
     ],
     imports: [
         BrowserModule,
-        MaterialModule,
-        RouterModule
+        RouterModule,
+        MaterialModule
     ],
     exports: [
         SortableTableComponent,
         SimpleListComponent,
-        BusinessCardComponent,
-        MaterialModule
+        BusinessCardComponent
     ]
 })
 

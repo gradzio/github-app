@@ -1,10 +1,11 @@
 import { CardItemVM } from 'src/app/shared/presentation-components/business-card/card-item.viewmodel';
-import { SortableCollection } from 'src/app/shared/presentation-components/sortable-table/sortable.collection';
+import { SortableCollection } from 'src/app/shared/presentation-components/simple-list/sortable.collection';
 import { Repository } from 'src/app/core/domain/repository/repository.model';
+import { Contributor } from 'src/app/core/domain/contributor/contributor.model';
 
 export class RepositoryDetailVM {
     private _card: CardItemVM;
-    private _collection = new SortableCollection({active: 'contributions', direction: 'desc'});
+    private _collection = new SortableCollection<Contributor>({active: 'contributions', direction: 'desc'});
     constructor(repository: Repository) {
       this._card = this.makeCard(repository);
       this._collection.items = repository.contributors;
@@ -24,7 +25,7 @@ export class RepositoryDetailVM {
       return this._card;
     }
   
-    get collection(): SortableCollection {
+    get collection(): SortableCollection<Contributor> {
       return this._collection;
     }
   }

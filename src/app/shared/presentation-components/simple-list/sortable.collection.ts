@@ -1,13 +1,13 @@
-import { Sort } from '@angular/material'
+import { Sort, MatPaginator } from '@angular/material'
 
-export class SortableCollection {
+export class SortableCollection<T> {
     private _sort: Sort;
-    private _items = [];
+    private _items: T[] = [];
     constructor(sort: Sort) {
         this._sort = sort;
     }
 
-    set items(items) {
+    set items(items: T[]) {
         this._items = items;
     }
 
@@ -15,7 +15,7 @@ export class SortableCollection {
         this._sort = sort;
     }
 
-    private doSort() {
+    private doSort(): T[] {
         this._items.sort((a, b) => this._compare(a[this._sort.active] || -1, b[this._sort.active] || -1, this._sort.direction === 'asc'));
         return this._items;
     }
@@ -24,7 +24,7 @@ export class SortableCollection {
         return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
     }
 
-    get items() {
+    get items(): T[] {
         return this.doSort();
     }
 }

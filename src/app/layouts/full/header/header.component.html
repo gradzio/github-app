@@ -1,0 +1,16 @@
+        
+<!-- ============================================================== -->
+<!-- Profile - style you can find in header.scss -->
+<!-- ============================================================== -->
+<button [matMenuTriggerFor]="profile" mat-icon-button class="m-r-5"> <img src="https://avatars0.githubusercontent.com/u/32451455?s=460&v=4" alt="user" class="profile-pic"> </button>
+<mat-menu #profile="matMenu" class="mymegamenu">
+    <button mat-menu-item>
+        <mat-icon>settings</mat-icon> Settings </button>
+    <a href="https://www.github.com/gradzio" target="_blank" mat-menu-item>
+        <mat-icon>account_box</mat-icon> My github account </a>
+    <button mat-menu-item>
+        <mat-icon>notifications_off</mat-icon> Disable notifications </button>
+    <button mat-menu-item>
+        <mat-icon>exit_to_app</mat-icon> Sign Out </button>
+</mat-menu>
+

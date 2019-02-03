@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { fadeInItems } from '@angular/material';
+import { AvatarItem, SimpleItem } from '../../github.viewmodel';
 
 @Component({
   selector: 'app-simple-list',
@@ -7,9 +8,10 @@ import { fadeInItems } from '@angular/material';
   styleUrls: ['./simple-list.component.scss']
 })
 export class SimpleListComponent {
-
   @Input()
-  items;
+  limit;
+  @Input()
+  items: AvatarItem | SimpleItem [];
 
   @Output()
   itemSelected = new EventEmitter();
