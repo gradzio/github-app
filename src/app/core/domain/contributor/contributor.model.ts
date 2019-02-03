@@ -14,6 +14,12 @@ export class Contributor {
         this._contributions = contributions;
     }
 
+    clone() {
+        const clone = new Contributor(this._id, this._username, this._contributions);
+        clone.merge(this);
+        return clone;
+    }
+
     isEqual(contributor: Contributor): boolean {
         return this._id == contributor.id && this._username == contributor.username;
     }
@@ -25,7 +31,7 @@ export class Contributor {
     }
 
     mergeContributor(contributor: Contributor) {
-        if (!contributor.isNotComplete()) {
+        if (!contributor.isNotComplete) {
             this._repoCount = contributor.repoCount;
             this._followers = contributor.followers;
             this._gists = contributor.gists;
@@ -44,7 +50,7 @@ export class Contributor {
         return `https://avatars3.githubusercontent.com/u/${this._id}?v=4&s=48`;
     }
 
-    isNotComplete() {
+    get isNotComplete() {
         return this._followers == null || this._gists == null || this._repoCount == null;
     }
 
@@ -55,9 +61,9 @@ export class Contributor {
         this._contributions = contributions;
     }
 
-    incrementContributions(contributions) {
-        this._contributions += contributions;
-    }
+    // incrementContributions(contributions) {
+    //     this._contributions += contributions;
+    // }
 
     get contributions() {
         return this._contributions;
@@ -84,7 +90,7 @@ export class Contributor {
 
     addRepository(repository: Repository) {
         this._repositories.push(repository);
-        this.incrementRepoCount(1);
+        // this.incrementRepoCount(1);
     }
 
     incrementRepoCount(repoCount: number) {

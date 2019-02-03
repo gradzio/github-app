@@ -4,7 +4,7 @@
         <mat-card>
             <mat-card-content class="p-b-0 m-b-0 mat-elevation-z4">
                 <mat-card-title>All {{(organization$ | async)?.name}} contributors</mat-card-title>
-                <app-sortable-table [tableData]="contributorData" (itemSelected)="onItemSelected($event)"></app-sortable-table>
+                <app-repository-contributors-table (itemSelected)="onItemSelected($event)"></app-repository-contributors-table>
             </mat-card-content>
         </mat-card>
     </div>

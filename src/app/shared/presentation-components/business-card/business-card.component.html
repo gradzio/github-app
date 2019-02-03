@@ -1,11 +1,11 @@
 <mat-card>
     <mat-card-header>
-        <img *ngIf="item.image" mat-card-avatar [src]="item?.image" width="50" />
-        <mat-card-title *ngIf="item.title">{{item?.title}}</mat-card-title>
-        <mat-card-subtitle *ngIf="item.subtitle">{{item?.subtitle}}</mat-card-subtitle>
+        <img *ngIf="item?.image" mat-card-avatar [src]="item?.image" width="50" />
+        <mat-card-title *ngIf="item?.title">{{item?.title}}</mat-card-title>
+        <mat-card-subtitle *ngIf="item?.subtitle">{{item?.subtitle}}</mat-card-subtitle>
       </mat-card-header>
     <mat-card-content>
-        <mat-chip-list *ngIf="item.details">
+        <mat-chip-list *ngIf="item?.details">
             <mat-chip *ngFor="let detail of item.details">{{detail}}</mat-chip>
           </mat-chip-list>
     </mat-card-content>

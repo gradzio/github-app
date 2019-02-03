@@ -15,6 +15,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // angular 139426
-    this.state.selectOrganization(new Organization(3657981, 'BetterCollective'));
+    this.state.selectOrganization(new Organization(139426, 'Angular'));
   }
 }

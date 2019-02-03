@@ -24,16 +24,13 @@ export class RepositoryService extends PaginatedService {
         })
         .pipe(
             switchMap((resp:any) => this.getRemainingPages(resp, baseUri)),
-            // filter((response: any) => response.body),
             map((allResponses: any) => {
                 allResponses
                     .filter(response => response.body)
                     .forEach(response => {
-                    repository.addContributors(response.body.map(contributor => {
-                        const contributorObject = new Contributor(contributor.id, contributor.login, contributor.contributions);
-                        return contributorObject;
-                    }))
-                });
+                        repository.addContributors(response.body.map(contributor => new Contributor(contributor.id, contributor.login, contributor.contributions)))
+                    });
+                repository.markLoaded();
                 return repository;
             })
         )

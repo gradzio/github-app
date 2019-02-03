@@ -7,7 +7,6 @@ describe('Repository', () => {
 
         expect(repository.organization).toEqual('org');
         expect(repository.name).toEqual('repo');
-        expect(repository.contributorsUrl).toEqual('https://api.github.com/repos/org/repo/stats/contributors');
     });
 
     it('should add contributors', () => {

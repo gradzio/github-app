@@ -70,6 +70,11 @@ table {
     }
 }
 
+.mat-card .mat-list-item:nth-child(even),
+.mat-card .mat-table .mat-row:nth-child(even) {
+    background-color: $light-primary;
+}
+
 .ngx-datatable.material{
     box-shadow: none;
     border:1px solid $border;

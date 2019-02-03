@@ -3,7 +3,7 @@
             <img mat-list-avatar *ngIf="item.avatarUrl" [src]="item.avatarUrl" alt="Avatar of {{item.name}}">
             <h3 matLine>{{item.name}}</h3>
             <p matLine *ngIf="item.description" class="text-muted">{{item.description}}</p>
-            <span fxFlex></span><mat-chip-list><mat-chip color="primary" selected>{{item.count}}</mat-chip></mat-chip-list>
+            <span fxFlex></span><mat-chip-list *ngIf="item.count"><mat-chip color="primary" selected>{{item.count}}</mat-chip></mat-chip-list>
     </mat-list-item>
 </mat-list>
 <!-- <ng-template #spinner>

@@ -1,5 +1,5 @@
 import { Contributor } from '../domain/contributor/contributor.model';
-import { BehaviorSubject, Observable, forkJoin, of, zip } from 'rxjs';
+import { BehaviorSubject, Observable, forkJoin, of, zip, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Repository } from '../domain/repository/repository.model';
 import { map, switchMap, filter } from 'rxjs/operators';
@@ -12,6 +12,9 @@ import { Organization } from '../domain/organization/organization.model';
 export class StateService {
     private selectedOrganizationSubject = new BehaviorSubject<Organization>(null);
     selectedOrganization$ = this.selectedOrganizationSubject.asObservable();
+
+    private selectedOrganizationWithContributorsSubject = new Subject<Organization>();
+    selectedOrganizationWithContributors$ = this.selectedOrganizationWithContributorsSubject.asObservable();
 
     private selectedContributorSubject = new BehaviorSubject<Contributor>(null);
     selectedContributor$ = this.selectedContributorSubject.asObservable();
@@ -42,7 +45,7 @@ export class StateService {
                 filter(contributor => contributor.isEqual(this.selectedContributorSubject.getValue())),
                 map(contributor => {
                     this.selectedContributorSubject.next(contributor);
-                    if (contributor.isNotComplete()) {
+                    if (contributor.isNotComplete) {
                         this.store.fetchContributorDetails([contributor.username]);
                     }
                 })
@@ -59,12 +62,9 @@ export class StateService {
                     }
                     
                     const organization = this.selectedOrganizationSubject.getValue();
-                    if (repository.isPartOfOrganization(organization)) {
-                        organization.addRepoContributors(repository);
+                    if (repository.isPartOfOrganization(organization) && organization.hasLoadedAllRepos) {
                         this.selectedOrganizationSubject.next(organization);
-                        if (organization.hasLoadedAllRepos) {
-                            // this.store.fetchContributorDetails(organization.contributorsWithoutDetailNames);
-                        }
+                        this.store.fetchContributorDetails(organization.contributorsWithoutDetailNames);
                     }
                 })
             ).subscribe();

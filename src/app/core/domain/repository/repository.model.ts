@@ -6,6 +6,7 @@ export class Repository {
     private _name         : string;
     private _contributors = {};
     private _contributorsWithDetails = {};
+    private _isLoaded = false;
     constructor(fullName: string) {
         const split = fullName.split('/');
         this._organization = split[0];
@@ -55,12 +56,24 @@ export class Repository {
         this._contributors[contributor.username] = contributor;
     }
 
+    getContributor(username) {
+        return this._contributors[username];
+    }
+
+    markLoaded() {
+        this._isLoaded = true;
+    }
+
     get contributors(): Contributor[] {
         return Object.values(this._contributors);
     }
 
     get contributorsWithoutDetailNames(): string[] {
         return Object.keys(this._contributors).filter(contributorName => Object.keys(this._contributorsWithDetails).indexOf(contributorName));
+    }
+
+    get isLoaded() {
+        return this._isLoaded;
     }
 
     get contributorDetailsLoadedCount() {

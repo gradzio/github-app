@@ -50,14 +50,14 @@ export class StoreService {
     constructor(private orgService: OrganizationService, private repoService: RepositoryService, private contributorService: ContributorService) {
         this.orgEvents$.subscribe((orgEvent: Event) => {
             this.orgService.getOrganizationRepos(orgEvent.data)
-            .pipe(
-                map((organization: Organization) => {
-                    this.organizationSubject.next(organization);
-                    organization.repositories.forEach(repo => {
-                        this.repoEventsSubject.next({type: EventType.NEW, name: repo.fullName, data: repo});
-                    });
-                })
-            ).subscribe();
+                .pipe(
+                    map((organization: Organization) => {
+                        this.organizationSubject.next(organization);
+                        organization.repositories.forEach(repo => {
+                            this.repoEventsSubject.next({type: EventType.NEW, name: repo.fullName, data: repo});
+                        });
+                    })
+                ).subscribe();
         });
 
         this.contributorEvents$.subscribe(contributorEvent => {

@@ -5,8 +5,6 @@ import { SortableCollection } from '../../shared/presentation-components/simple-
 import { map, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { StateService } from '../../core/state/state.service';
-import { Contributor } from 'src/app/core/domain/contributor/contributor.model';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
 import { AvatarItem, SimpleItem } from 'src/app/shared/github.viewmodel';
 import { Repository } from 'src/app/core/domain/repository/repository.model';
 
@@ -31,7 +29,7 @@ export class OrganizationDetailComponent implements OnInit {
     this.contributorCollection$ = this.state.selectedOrganization$
       .pipe(
         map(organization => {
-          this.contributorCollection.items = organization.contributors
+          this.contributorCollection.items = organization.repoContributors
             .map(contributor => {
               return {
                 avatarUrl: contributor.avatarUrl,

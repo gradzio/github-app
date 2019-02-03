@@ -1,11 +1,11 @@
 import { Organization } from "./organization.model";
 import { Contributor } from '../contributor/contributor.model';
 
-describe('Organization', () => {
+fdescribe('Organization', () => {
     let organization;
 
     beforeEach(() => {
-        organization = new Organization('org');
+        organization = new Organization(1, 'org');
     });
 
     it('should make simple organization', () => {
