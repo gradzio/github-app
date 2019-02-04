@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Contributor } from './contributor.model';
 import { Observable, of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { Repository } from '../repository/repository.model';
 import { PaginatedService } from '../../pagination/paginated.service';
 import { LinkHeaderParser } from '../../pagination/link-header.parser';
 import { github } from 'src/config/github';
@@ -20,6 +19,7 @@ export class ContributorService extends PaginatedService {
     }
 
     getContributorsDetails(contributorNames: string[]) {
+        this.page = 1;
         const firstName = contributorNames.shift();
 
         return this.client.get<any>(`${github.baseUrl}/users/${firstName}`, {headers: github.headers, observe: 'response'})

@@ -14,9 +14,6 @@ export class StateService {
     private selectedOrganizationSubject = new BehaviorSubject<Organization>(null);
     selectedOrganization$ = this.selectedOrganizationSubject.asObservable();
 
-    private selectedOrganizationWithContributorsSubject = new Subject<Organization>();
-    selectedOrganizationWithContributors$ = this.selectedOrganizationWithContributorsSubject.asObservable();
-
     private selectedContributorSubject = new BehaviorSubject<Contributor>(null);
     selectedContributor$ = this.selectedContributorSubject.asObservable();
 

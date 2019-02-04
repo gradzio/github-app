@@ -44,9 +44,7 @@ export class StoreService {
     contributorDetailsToBeFetched = [];
 
     contributorPageSize = 50;
-    onPage = 0;
-    perPage = 100;
-    page = 1;
+    
     constructor(private orgService: OrganizationService, private repoService: RepositoryService, private contributorService: ContributorService) {
         this.orgEvents$.subscribe((orgEvent: Event) => {
             this.orgService.getOne(orgEvent.name)

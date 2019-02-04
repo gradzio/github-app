@@ -62,10 +62,6 @@ export class Contributor {
         this._contributions = contributions;
     }
 
-    // incrementContributions(contributions) {
-    //     this._contributions += contributions;
-    // }
-
     get contributions() {
         return this._contributions;
     }
