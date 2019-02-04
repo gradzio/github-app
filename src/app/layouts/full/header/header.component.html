@@ -2,6 +2,8 @@
 <!-- ============================================================== -->
 <!-- Profile - style you can find in header.scss -->
 <!-- ============================================================== -->
+<input #item fxFlex="200px" matInput [value]="(organization$ | async)?.name" placeholder="Organization" />
+<button mat-icon-button (click)="search(item.value)"><mat-icon>search</mat-icon></button>
 <button [matMenuTriggerFor]="profile" mat-icon-button class="m-r-5"> <img src="https://avatars0.githubusercontent.com/u/32451455?s=460&v=4" alt="user" class="profile-pic"> </button>
 <mat-menu #profile="matMenu" class="mymegamenu">
     <button mat-menu-item>
