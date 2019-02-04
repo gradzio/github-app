@@ -1,5 +1,6 @@
 import { Contributor } from '../contributor/contributor.model';
 import { Organization } from '../organization/organization.model';
+import { ContributorDetail } from '../contributor-details/contributor-detail.model';
 
 export class Repository {
     private _organization : string;

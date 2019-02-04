@@ -19,22 +19,6 @@ export class ContributorService extends PaginatedService {
         super(client, parser);
     }
 
-    getContributorRepos(contributor: Contributor): Observable<Contributor> {
-        const baseUri = `${github.baseUrl}/users/${contributor.username}/repos`;
-        return this.client.get<any>(`${baseUri}?page=${this.page}&per_page=${this.perPage}`, { headers: github.headers, observe: 'response'})
-        .pipe(
-            switchMap((resp:any) => this.getRemainingPages(resp, baseUri)),
-            map((allResponses: any) => {
-                allResponses
-                .filter(response => response.body)
-                .forEach(response => {
-                    response.body.forEach(repo => contributor.addRepository(new Repository(repo.full_name)));
-                });
-                return contributor;
-            })
-        );
-    }
-
     getContributorsDetails(contributorNames: string[]) {
         const firstName = contributorNames.shift();
 
@@ -54,26 +38,40 @@ export class ContributorService extends PaginatedService {
         )
     }
 
+    getAllByRepoFullName(repoFullName: string): Observable<Contributor[]> {
+        this.page = 1;
+        const baseUri = `${github.baseUrl}/repos/${repoFullName}/contributors`;
+        return this.client.get(`${baseUri}?per_page=${this.perPage}&page=${this.page}`, {
+            headers: github.headers,
+            observe: 'response'
+        })
+        .pipe(
+            switchMap((resp:any) => this.getRemainingPages(resp, baseUri)),
+            map((allResponses: any) => {
+                const contributors = [];
+                allResponses
+                    .filter(response => response.body)
+                    .forEach(response => {
+                        response.body.forEach(contributor => contributors.push(new Contributor(contributor.id, contributor.login, contributor.contributions)))
+                    });
+                
+                return contributors;
+            })
+        )
+    }
+
     getRemainingPages(resp, baseUri) {
         return super.getRemainingPages(resp, baseUri);
     }
 
-    getOne(contributor: Contributor): Observable<Contributor> {
-        // return forkJoin(
-            // this.client.get<any[]>(`https://api.github.com/users/${contributor.username}/repos`),
-            // this.client.get<any[]>(`https://api.github.com/users/${contributor.username}/followers`),
-            // this.client.get<any[]>(`https://api.github.com/users/${contributor.username}/gists`),
-            return this.client.get<any>(`${github.baseUrl}/users/${contributor.username}`, {
-                headers: github.headers})
+    getOne(contributorName: string): Observable<Contributor> {
+            return this.client.get<any>(`${github.baseUrl}/users/${contributorName}`, {headers: github.headers})
             .pipe(
             map(response => {
+                const contributor = new Contributor(response.id, response.login, 0);
                 contributor.followers = response.followers;
                 contributor.gists = response.public_gists;
                 contributor.repoCount = response.public_repos;
-                // responses[0].forEach(repoData => {
-                //     contributor.addRepository(new Repository(repoData.full_name));
-                // });
-                // contributor.id = responses[3].id;
                 return contributor;
             })
         );

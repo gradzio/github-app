@@ -15,10 +15,10 @@ const routes: Routes = [
   },
   {
     path: 'contributors',
-    component: OrganizationContributorsComponent
+    component: OrganizationContributorsComponent,
   },
   {
-    path: 'contributor',
+    path: 'contributors/:name',
     component: ContributorDetailComponent,
     resolve: {
       contributor: ContributorDetailResolverService
@@ -29,7 +29,7 @@ const routes: Routes = [
     component: OrganizationReposComponent
   },
   {
-    path: 'repo',
+    path: 'repos/:name',
     component: RepositoryDetailComponent,
     resolve: {
       repository: RepositoryDetailResolverService

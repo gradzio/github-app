@@ -16,6 +16,7 @@ export class OrganizationContributorsTableComponent extends SortableTableCompone
     loadData() {
         this.state.selectedOrganization$
             .pipe(
+                filter((organization: Organization) => organization !== null),
                 map((organization: Organization) => {
                     this.dataSource.data =  organization.repoContributors;
                 })

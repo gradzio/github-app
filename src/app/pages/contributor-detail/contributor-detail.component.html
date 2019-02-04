@@ -3,10 +3,13 @@
         <app-business-card [item]="(contributorVM$ | async)?.card"></app-business-card>
     </div>
 </div>
-<div fxLayout="row">
+<div fxLayout="row" *ngIf="contributorVM$ | async">
     <div fxFlex.gt-sm="100%" >
         <mat-card>
-            <app-simple-list [items]="(contributorVM$ | async)?.collection.items" (itemSelected)="onItemSelected($event)"></app-simple-list>
+            <mat-card-content>
+                <mat-card-title>{{(contributorVM$ | async)?.card.title}}'s repositories:</mat-card-title>
+                <app-simple-list [items]="(contributorVM$ | async)?.collection.items" (itemSelected)="onItemSelected($event)"></app-simple-list>
+            </mat-card-content>
         </mat-card>
     </div>
 </div>

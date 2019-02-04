@@ -16,7 +16,7 @@ import { StateService } from 'src/app/core/state/state.service';
 import { Observable } from 'rxjs';
 import { Organization } from 'src/app/core/domain/organization/organization.model';
 import { AvatarItem } from 'src/app/shared/github.viewmodel';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 
 /** @title Responsive sidenav */
 @Component({
@@ -42,6 +42,7 @@ export class FullComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
    this.organization$ = this.state.selectedOrganization$.pipe(
+     filter(organization => organization !== null),
      map((organization: Organization) => {
        return {avatarUrl: organization.avatarUrl, name: organization.name};
      })

@@ -11,16 +11,9 @@ import { mergeMap, take, map, switchMap } from 'rxjs/operators';
   export class RepositoryDetailResolverService implements Resolve<Repository> {
     constructor(private stateService: StateService, private router: Router) {}
    
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Repository> | Observable<never> {
-        return this.stateService.selectedRepo$.pipe(
-            take(1),
-            mergeMap(repo => {
-                if (!repo) {
-                    this.router.navigate(['']);
-                    return EMPTY;
-                }
-                return of(repo);
-            })
-        );
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Repository> {
+        const repo = new Repository(route.params.name);
+        this.stateService.selectRepo(repo);
+        return of(repo);
     }
   }

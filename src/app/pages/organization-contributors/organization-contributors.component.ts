@@ -21,7 +21,7 @@ export class OrganizationContributorsComponent implements OnInit {
   ngOnInit() {
     this.organization$ = this.state.selectedOrganization$
       .pipe(
-        filter((organization: Organization) => organization.hasLoadedAllRepos),
+        filter((organization: Organization) => organization !== null && organization.hasLoadedAllRepos),
         map(organization => {
           this.repoContributorData =  organization.repoContributors;
           return organization;
@@ -30,9 +30,8 @@ export class OrganizationContributorsComponent implements OnInit {
       );
   }
 
-  onItemSelected($event) {
-    this.state.selectContributor($event);
-    this.router.navigate(['/contributor']);
+  onItemSelected(contributor: Contributor) {
+    this.router.navigate(['/contributors', contributor.username]);
   }
 
 }

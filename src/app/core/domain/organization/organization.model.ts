@@ -8,6 +8,7 @@ export class Organization {
     private _contributorsWithDetails = {};
     private _repositories = {};
     private _reposWithContributors = {};
+    private _isLoaded = false;
     constructor(id: number, name: string) {
         this._id = id;
         this._name = name;
@@ -132,6 +133,18 @@ export class Organization {
 
     get hasLoadedAllDetails(): boolean {
         return this.contributorDetailsLoadedCount > 0 && this.contributorDetailsLoadedCount == this.repoContributors.length;
+    }
+
+    markLoaded() {
+        this._isLoaded = true;
+    }
+
+    get isLoaded() {
+        return this._isLoaded;
+    }
+
+    addRepositories(repositories: Repository[]) {
+        repositories.forEach(repository => this.addRepository(repository));
     }
 
     addRepository(repository: Repository) {

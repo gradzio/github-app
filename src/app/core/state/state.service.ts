@@ -5,6 +5,7 @@ import { Repository } from '../domain/repository/repository.model';
 import { map, switchMap, filter } from 'rxjs/operators';
 import { StoreService } from './store.service';
 import { Organization } from '../domain/organization/organization.model';
+import { ContributorDetail } from '../domain/contributor-details/contributor-detail.model';
 
 @Injectable({
     providedIn: 'root'
@@ -26,7 +27,12 @@ export class StateService {
         this.store.organization$
             .pipe(
                 map(org => {
-                    this.selectedOrganizationSubject.next(org)
+                    if (org.isLoaded) {
+                        this.selectedOrganizationSubject.next(org);
+                        org.repositories.forEach(repo => {
+                            this.store.fetchRepositoryContributors(repo);
+                        });
+                    }
                 })
             )
             .subscribe();
@@ -45,9 +51,6 @@ export class StateService {
                 filter(contributor => contributor.isEqual(this.selectedContributorSubject.getValue())),
                 map(contributor => {
                     this.selectedContributorSubject.next(contributor);
-                    if (contributor.isNotComplete) {
-                        this.store.fetchContributorDetails([contributor.username]);
-                    }
                 })
             ).subscribe();
 
@@ -72,13 +75,13 @@ export class StateService {
 
     selectContributor(contributor: Contributor) {
         this.selectedContributorSubject.next(contributor);
-        this.store.fetchContributorRepos(contributor);
+        this.store.fetchContributorRepos(contributor.username);
         this.store.fetchContributorDetails([]);
     }
 
-    selectOrganization(organization: Organization) {
-        this.selectedOrganizationSubject.next(organization);
-        this.store.fetchOrganization(organization);
+    selectOrganization(organizationName: string) {
+        this.selectedOrganizationSubject.next(new Organization(0, organizationName));
+        this.store.fetchOrganization(organizationName);
     }
 
     selectRepo(repo: Repository) {

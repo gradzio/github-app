@@ -4,9 +4,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { SimpleListComponent } from './presentation-components/simple-list/simple-list.component';
 import { BusinessCardComponent } from './presentation-components/business-card/business-card.component';
-import { RepositoryContributorsTableComponent } from './smart-components/sortable-table/repository-contributors.component';
+import { RepositoryContributorsTableComponent } from './smart-components/sortable-table/repository-contributors-table.component';
 import { SortableTableComponent } from './smart-components/sortable-table/sortable-table.component';
-import { OrganizationContributorsTableComponent } from './smart-components/sortable-table/organization-contributors.component';
+import { OrganizationContributorsTableComponent } from './smart-components/sortable-table/organization-contributors-table.component';
 
 @NgModule({
     declarations: [

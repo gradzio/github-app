@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, BehaviorSubject, of, from } from 'rxjs';
+import { forkJoin, BehaviorSubject, of, from, Observable } from 'rxjs';
 import { Contributor } from '../contributor/contributor.model';
 import { Organization } from './organization.model';
 import { switchMap, map, tap, filter, flatMap } from 'rxjs/operators';
@@ -21,23 +21,12 @@ export class OrganizationService extends PaginatedService {
         super(client, parser);
     }
 
-    getOrganizationRepos(organization: Organization) {
-        const baseUri = `${github.baseUrl}/orgs/${organization.name}/repos`;
-        return this.client.get<any>(`${baseUri}?per_page=${this.perPage}&page=${this.page}`, {headers: github.headers, observe: 'response'})
-        .pipe(
-            switchMap(resp => this.getRemainingPages(resp, `${github.baseUrl}/orgs/${organization.name}/repos`)),
-            // flatMap(resp => resp),
-            // filter(resp => resp.body),
-            map(responses => {
-                responses.forEach(response => {
-                    response.body.map(repo => {
-                        const repository = new Repository(repo.full_name);
-                        organization.addRepository(repository);
-                    });
-                });
-                return organization;
-            })
-        );
+    getOne(organizationName: string): Observable<Organization> {
+        return this.client.get<any>(`${github.baseUrl}/orgs/${organizationName}`, {headers: github.headers, observe: 'response'})
+            .pipe(
+                filter(response => response.body),
+                map(response => new Organization(response.body.id, response.body.login))
+            );
     }
 
     getRemainingPages(resp, baseUri) {

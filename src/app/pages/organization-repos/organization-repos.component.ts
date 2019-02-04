@@ -37,8 +37,7 @@ export class OrganizationReposComponent implements OnInit {
   }
 
   onItemSelected($event: SimpleItem) {
-      this.state.selectRepo(new Repository($event.description + '/' + $event.name));
-      this.router.navigate(['/repo']);
+      this.router.navigate(['/repos', $event.description + '/' + $event.name]);
   }
 
 }

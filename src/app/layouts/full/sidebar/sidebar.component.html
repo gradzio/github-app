@@ -3,12 +3,12 @@
 <!-- ============================================================== -->
  <div class="user-profile" style="background: url(assets/images/background/mountains.jpg) no-repeat;">
     <!-- User profile image -->
-    <div class="profile-img"> <img [src]="item.avatarUrl" alt="organization"> </div>
+    <div class="profile-img"> <img *ngIf="item" [src]="item?.avatarUrl" alt="{{item.name}} logo"> </div>
     <!-- User profile text-->
     <!-- ============================================================== -->
     <!-- Profile - style you can find in header.scss -->
     <!-- ============================================================== -->
-    <div class="profile-text"><a [matMenuTriggerFor]="sdprofile" class=""> {{item.name}} <i class="ti-angle-down font-12 m-l-5"></i></a></div>
+    <div class="profile-text"><a [matMenuTriggerFor]="sdprofile" class=""> {{item?.name}} <i class="ti-angle-down font-12 m-l-5"></i></a></div>
     <mat-menu #sdprofile="matMenu" class="mymegamenu">
         <button mat-menu-item>
             <mat-icon>settings</mat-icon> Settings </button>

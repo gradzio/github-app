@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { Repository } from '../../core/domain/repository/repository.model';
 import { StateService } from '../../core/state/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { map, debounceTime } from 'rxjs/operators';
+import { map, debounceTime, filter } from 'rxjs/operators';
 import { RepositoryDetailVM } from './repository-detail.viewmodel';
 import { Contributor } from 'src/app/core/domain/contributor/contributor.model';
 
@@ -21,7 +21,7 @@ export class RepositoryDetailComponent implements OnInit {
   ngOnInit() {
     this.repositoryVM$ = this.state.selectedRepo$
     .pipe(
-      debounceTime(2000),
+      filter((repository: Repository) => repository !== null && repository.isLoaded),
       map((repository: Repository) => {
         this.contributorData = repository.contributors;
         return new RepositoryDetailVM(repository);
@@ -29,8 +29,7 @@ export class RepositoryDetailComponent implements OnInit {
     );
   }
 
-  onItemSelected($event) {
-    this.state.selectContributor($event);
-    this.router.navigate(['/contributor']);
+  onItemSelected(contributor: Contributor) {
+    this.router.navigate(['/contributors', contributor.username]);
   }
 }

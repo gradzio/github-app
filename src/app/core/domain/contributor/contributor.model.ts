@@ -8,6 +8,7 @@ export class Contributor {
     private _gists         : number;
     private _repoCount     : number;
     private _repositories = new Array<Repository>();
+    private _isLoaded = false;
     constructor(id, username, contributions) {
         this._id = id;
         this._username = username;
@@ -16,12 +17,12 @@ export class Contributor {
 
     clone() {
         const clone = new Contributor(this._id, this._username, this._contributions);
-        clone.merge(this);
+        clone.mergeContributor(this);
         return clone;
     }
 
     isEqual(contributor: Contributor): boolean {
-        return this._id == contributor.id && this._username == contributor.username;
+        return contributor && this._username == contributor.username;
     }
 
     merge(contributorDetail) {
@@ -88,13 +89,12 @@ export class Contributor {
         return this._repoCount;
     }
 
-    addRepository(repository: Repository) {
-        this._repositories.push(repository);
-        // this.incrementRepoCount(1);
+    addRepositories(repositories: Repository[]) {
+        repositories.forEach(repository => this.addRepository(repository));
     }
 
-    incrementRepoCount(repoCount: number) {
-        this._repoCount += repoCount;
+    addRepository(repository: Repository) {
+        this._repositories.push(repository);
     }
 
     get repositories() {
@@ -110,5 +110,13 @@ export class Contributor {
 
     get gists() {
         return this._gists;
+    }
+
+    markLoaded() {
+        this._isLoaded = true;
+    }
+
+    get isLoaded() {
+        return this._isLoaded;
     }
 }

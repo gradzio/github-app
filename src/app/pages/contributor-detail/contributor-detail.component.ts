@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Contributor } from '../../core/domain/contributor/contributor.model';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StateService } from '../../core/state/state.service';
 import { ContributorDetailVM } from './contributor-detail.viewmodel';
+import { Repository } from 'src/app/core/domain/repository/repository.model';
 
 @Component({
   selector: 'app-contributor-detail',
@@ -19,12 +20,14 @@ export class ContributorDetailComponent implements OnInit {
   ngOnInit() {
     this.contributorVM$ = this.state.selectedContributor$
       .pipe(
-        map((contributor: Contributor) => new ContributorDetailVM(contributor))
+        filter((contributor: Contributor) => contributor && contributor.isLoaded && !contributor.isNotComplete),
+        map((contributor: Contributor) => {
+          return new ContributorDetailVM(contributor)
+        })
       );
   }
 
-  onItemSelected($event) {
-    this.state.selectRepo($event);
-    this.router.navigate(['/repo']);
+  onItemSelected(repository: Repository) {
+    this.router.navigate(['/repos', repository.fullName]);
   }
 }

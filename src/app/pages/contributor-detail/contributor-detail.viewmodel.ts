@@ -2,7 +2,6 @@ import { CardItemVM } from 'src/app/shared/presentation-components/business-card
 import { SortableCollection } from 'src/app/shared/presentation-components/simple-list/sortable.collection';
 import { Contributor } from 'src/app/core/domain/contributor/contributor.model';
 import { Repository } from 'src/app/core/domain/repository/repository.model';
-import { MatTableDataSource } from '@angular/material';
 
 export class ContributorDetailVM {
     private _card: CardItemVM;
@@ -13,16 +12,11 @@ export class ContributorDetailVM {
     }
   
     private makeCard(contributor: Contributor): CardItemVM {
-      const details = [];
-      if (contributor.followers) {
-        details.push('Followers: ' + contributor.followers);
-      }
-      if (contributor.repoCount) {
-        details.push('Repositories: ' + contributor.repoCount);
-      }
-      if (contributor.gists) {
-        details.push('Gists: ' + contributor.gists);
-      }
+      const details = [
+        'Followers: ' + contributor.followers,
+        'Repositories: ' + contributor.repoCount,
+        'Gists: ' + contributor.gists
+      ];
       return {image: contributor.avatarUrl, title: contributor.username, details}
     }
   

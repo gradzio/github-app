@@ -49,35 +49,54 @@ export class StoreService {
     page = 1;
     constructor(private orgService: OrganizationService, private repoService: RepositoryService, private contributorService: ContributorService) {
         this.orgEvents$.subscribe((orgEvent: Event) => {
-            this.orgService.getOrganizationRepos(orgEvent.data)
-                .pipe(
-                    map((organization: Organization) => {
-                        this.organizationSubject.next(organization);
-                        organization.repositories.forEach(repo => {
-                            this.repoEventsSubject.next({type: EventType.NEW, name: repo.fullName, data: repo});
-                        });
-                    })
-                ).subscribe();
+            this.orgService.getOne(orgEvent.name)
+            .pipe(
+                switchMap((organization: Organization) => {
+                    return this.repoService.getAllByOrganizationName(organization.name)
+                    .pipe(
+                        map((repositories: Repository[]) => {
+                            organization.addRepositories(repositories);
+                            organization.markLoaded();
+                            this.organizationSubject.next(organization);
+                        })
+                    )
+                })
+            ).subscribe();
         });
 
-        this.contributorEvents$.subscribe(contributorEvent => {
-            this.contributorService.getContributorRepos(contributorEvent.data)
-                .pipe(
-                    map(contributor => {
-                        const contributorDetail = this.contributorDetailsSubject.getValue()[contributor.username];
-                        if (contributorDetail) {
-                            contributor.merge(contributorDetail);
-                        }
-                        this.contributorSubject.next(contributor);
-                    })
-                ).subscribe();
+        this.contributorEvents$.subscribe((contributorEvent: Event) => {
+            this.contributorService.getOne(contributorEvent.name)
+            .pipe(
+                map((contributor: Contributor) => {
+                    const contributorDetails = this.contributorDetailsSubject.getValue();
+                    if (!contributorDetails[contributor.username]) {
+                        contributorDetails[contributor.username] = contributor;
+                        this.contributorDetailsSubject.next(contributorDetails);
+                    }
+                    return contributor;
+                }),
+                switchMap((contributor: Contributor) => {
+                    return this.repoService.getAllByContributorName(contributor.username)
+                        .pipe(
+                            map((repositories: Repository[]) => {
+                                contributor.addRepositories(repositories);
+                                contributor.markLoaded();
+                                this.contributorSubject.next(contributor);
+                            })
+                        )
+                })
+            )
+            .subscribe();
         });
 
         this.repoEvents$.subscribe(repoEvent => {
-            this.repoService.getRepoContributors(repoEvent.data)
+            this.contributorService.getAllByRepoFullName(repoEvent.name)
                 .pipe(
-                    map(repository => {
+                    map((contributors: Contributor[]) => {
+                        const repository = repoEvent.data;
+                        repository.addContributors(contributors);
                         repository.mergeContributorDetails(this.contributorDetailsSubject.getValue());
+                        repository.markLoaded();
                         this.repositorySubject.next(repository);
                     })
                 ).subscribe();
@@ -87,21 +106,21 @@ export class StoreService {
             if (this.contributorDetailsToBeFetched.length > 0) {
                 // this.contributorDetailsToBeFetched = detailsEvent.data;
                 const contributorsChunk = this.contributorDetailsToBeFetched.slice(0, this.contributorPageSize);
+                const details = this.contributorDetailsSubject.getValue();
                 this.contributorService.getContributorsDetails(contributorsChunk)
                     .pipe(
                         map((contributorDetails) => {
-                            const details = this.contributorDetailsSubject.getValue();
                             contributorDetails.forEach(contributorDetail => {
                                 details[contributorDetail.login] = contributorDetail;
                             });
-                            this.contributorDetailsSubject.next(details);
                             return details;
                         })
                     ).subscribe(details => {
-                            if (this.contributorDetailsToBeFetched.length > 0) {
-                                this.contributorDetailsToBeFetched = this.contributorDetailsToBeFetched.filter(contributorName => Object.keys(details).indexOf(contributorName) == -1);
-                                this.detailEventsSubject.next({type: EventType.NEW, name: 'details'});
-                            }
+                        this.contributorDetailsSubject.next(details);
+                        if (this.contributorDetailsToBeFetched.length > 0) {
+                            this.contributorDetailsToBeFetched = this.contributorDetailsToBeFetched.filter(contributorName => Object.keys(details).indexOf(contributorName) == -1);
+                            this.detailEventsSubject.next({type: EventType.NEW, name: 'details'});
+                        }
                         }, error => console.log('oops', error)
                     );
             }
@@ -116,19 +135,17 @@ export class StoreService {
          });
      }
 
-     fetchContributorRepos(contributor: Contributor) {
+     fetchContributorRepos(contributorName: string) {
         this.contributorEventsSubject.next({
             type: EventType.NEW,
-            name: contributor.username,
-            data: contributor
+            name: contributorName,
         });
      }
 
-     fetchOrganization(organization: Organization) {
+     fetchOrganization(organizationName: string) {
          this.orgEventsSubject.next({
             type: EventType.NEW,
-            name: organization.name,
-            data: organization
+            name: organizationName
         });
      }
 
