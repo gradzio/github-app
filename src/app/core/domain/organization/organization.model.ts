@@ -4,7 +4,6 @@ import { Repository } from '../repository/repository.model';
 export class Organization {
     private _id : number;
     private _name        : string;
-    private _contributorsWithDetails = {};
     private _repositories = {};
     private _isLoaded = false;
     constructor(id: number, name: string) {

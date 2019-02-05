@@ -8,8 +8,8 @@ import { RepositoryService } from '../domain/repository/repository.service';
 import { OrganizationService } from '../domain/organization/organization.service';
 import { ContributorService } from '../domain/contributor/contributor.service';
 
-interface Event {
-    name: string;
+interface LoadDetails {
+    contributorNames: string[]
 }
 
 @Injectable({
@@ -22,8 +22,11 @@ export class StoreService {
     // repoEvents$: Observable<Event> = this.repoEventsSubject.asObservable();
     // private contributorEventsSubject = new Subject<Event>();
     // contributorEvents$: Observable<Event> = this.contributorEventsSubject.asObservable();
-    private detailEventsSubject = new Subject<Event>();
+    private detailEventsSubject = new Subject<LoadDetails>();
     detailEvents$ = this.detailEventsSubject.asObservable();
+    
+    private isDetailProcessingEnabledSubject = new BehaviorSubject<boolean>(false);
+    isDetailProcessingEnabled$ = this.isDetailProcessingEnabledSubject.asObservable();
 
     private organizationSubject = new Subject<Organization>();
     organization$ = this.organizationSubject.asObservable();
@@ -40,29 +43,31 @@ export class StoreService {
     
     constructor(private orgService: OrganizationService, private repoService: RepositoryService, private contributorService: ContributorService) {
         this.detailEvents$.subscribe(detailsEvent => {
-            if (this.contributorDetailsToBeFetched.length > 0) {
-                const contributorsChunk = this.contributorDetailsToBeFetched.slice(0, this.contributorPageSize);
-                const details = this.contributorDetailsSubject.getValue();
-                this.contributorService.getContributorsDetails(contributorsChunk)
-                    .pipe(
-                        map((contributorDetails) => {
-                            contributorDetails.forEach(contributorDetail => {
-                                details[contributorDetail.login] = contributorDetail;
-                            });
-                            return details;
-                        })
-                    ).subscribe(details => {
-                        this.contributorDetailsSubject.next(details);
-                        if (this.contributorDetailsToBeFetched.length > 0) {
-                            this.contributorDetailsToBeFetched = this.contributorDetailsToBeFetched.filter(contributorName => Object.keys(details).indexOf(contributorName) == -1);
-                            this.detailEventsSubject.next({
-                                name: 'details'
-                            });
-                        }
-                        }, error => console.log('oops', error)
-                    );
+            this.processContributorsChunk(detailsEvent.contributorNames);
+        });
+
+        this.contributorDetails$.subscribe(details => {
+            if (this.contributorDetailsToBeFetched.length > 0 && this.isDetailProcessingEnabledSubject.getValue() === true) {
+                this.contributorDetailsToBeFetched = this.contributorDetailsToBeFetched.filter(contributorName => Object.keys(details).indexOf(contributorName) == -1);
+                this.detailEventsSubject.next({
+                    contributorNames: this.contributorDetailsToBeFetched.slice(0, this.contributorPageSize)
+                });
             }
         });
+     }
+
+     processContributorsChunk(contributorsChunk: string[]) {
+        const details = this.contributorDetailsSubject.getValue();
+        this.contributorService.getContributorsDetails(contributorsChunk)
+            .pipe(
+                map((contributorDetails) => {
+                    contributorDetails.forEach(contributorDetail => {
+                        details[contributorDetail.login] = contributorDetail;
+                    });
+                    this.contributorDetailsSubject.next(details);
+                    return details;
+                })
+            ).subscribe();
      }
 
      fetchRepositoryContributors(repoName: string) {
@@ -120,8 +125,14 @@ export class StoreService {
         const fetchedContributorNames = Object.keys(this.contributorDetailsSubject.getValue());
         this.contributorDetailsToBeFetched = contributorNames.filter(contributorName => fetchedContributorNames.indexOf(contributorName) == -1);
         if (this.contributorDetailsToBeFetched.length > 0) {
+            this.isDetailProcessingEnabledSubject.next(true);
+            const contributorsChunk = this.contributorDetailsToBeFetched.slice(0, this.contributorPageSize);
             // this.contributorDetailsToBeFetched = [...contributorNames, ...this.contributorDetailsToBeFetched.filter(contributorName => contributorNames.indexOf(contributorName) == -1 )];
-            this.detailEventsSubject.next({name: 'details'});
+            this.detailEventsSubject.next({contributorNames: contributorsChunk});
         }
+     }
+
+     disableDetailProcessing() {
+         this.isDetailProcessingEnabledSubject.next(false);
      }
 }

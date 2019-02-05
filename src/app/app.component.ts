@@ -14,6 +14,6 @@ export class AppComponent implements OnInit {
   constructor(private state: StateService) {}
 
   ngOnInit() {
-    this.state.selectOrganization('BetterCollective');
+    this.state.selectOrganization('Angular');
   }
 }

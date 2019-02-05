@@ -15,10 +15,19 @@ import { Repository } from 'src/app/core/domain/repository/repository.model';
 export class OrganizationReposComponent implements OnInit {
   repoCollection = new SortableCollection<SimpleItem>({active: 'count', direction: 'desc'});
   repoCollection$: Observable<SortableCollection<SimpleItem>>;
+  organization$: Observable<Organization>;
 
   constructor(private state: StateService, private router: Router) {}
 
   ngOnInit() {
+    this.organization$ = this.state.selectedOrganization$
+      .pipe(
+        filter((organization: Organization) => organization !== null),
+        map(organization => {
+          // this.state.selectOrganization(organization.name);
+          return organization;
+        })
+      );
     this.repoCollection$ = this.state.selectedOrganization$
       .pipe(
         filter((organization: Organization) => organization.hasLoadedAllRepos),

@@ -25,7 +25,14 @@ export class OrganizationDetailComponent implements OnInit {
   constructor(private state: StateService, private router: Router) {}
 
   ngOnInit() {
-    this.organization$ = this.state.selectedOrganization$;
+    this.organization$ = this.state.selectedOrganization$
+    .pipe(
+      filter((organization: Organization) => organization !== null),
+      map(organization => {
+        // this.state.selectOrganization(organization.name);
+        return organization;
+      })
+    );
     
     this.contributorCollection$ = this.state.selectedOrganization$
       .pipe(

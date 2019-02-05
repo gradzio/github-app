@@ -6,7 +6,6 @@ import { map, debounceTime, filter } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { StateService } from '../../core/state/state.service';
 import { Contributor } from 'src/app/core/domain/contributor/contributor.model';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
 
 @Component({
   selector: 'app-organization-contributors',
@@ -19,15 +18,8 @@ export class OrganizationContributorsComponent implements OnInit {
   constructor(private state: StateService, private router: Router) {}
 
   ngOnInit() {
-    this.organization$ = this.state.selectedOrganization$
-      .pipe(
-        filter((organization: Organization) => organization !== null && organization.hasLoadedAllRepos),
-        map(organization => {
-          this.repoContributorData =  organization.repoContributors;
-          return organization;
-        }),
-        debounceTime(1000),
-      );
+    this.organization$ = this.state.selectedOrganization$;
+    this.state.loadMissingContributorDetails();
   }
 
   onItemSelected(contributor: Contributor) {

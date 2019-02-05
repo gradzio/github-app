@@ -1,25 +1,18 @@
-export class Stack {
-    private items = [];
-    private count = 0;
-    
-    get length() {
-      return this.count;
+export class PagedStack<T> {
+    private _items: T[] = [];
+    private _count = 0;
+
+    constructor(pageSize: number) {
+
     }
     
-    push(item) {
-      this.items.push(item);
-      this.count = this.count + 1;
+    get length(): number {
+      return this._items.length;
     }
     
-    pop() {
-      if(this.count > 0) {
-        this.count = this.count - 1;
-      }
-      
-      return this.items.pop();
-    }
-    
-    peek() {
-      return this.items.slice(-1)[0];
+    push(items: T[]) {
+      items.reverse().forEach(item => {
+        this._items.push(item);  
+      });
     }
   }

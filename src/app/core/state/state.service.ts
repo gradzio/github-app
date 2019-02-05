@@ -1,11 +1,10 @@
 import { Contributor } from '../domain/contributor/contributor.model';
-import { BehaviorSubject, Observable, forkJoin, of, zip, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Repository } from '../domain/repository/repository.model';
-import { map, switchMap, filter } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { StoreService } from './store.service';
 import { Organization } from '../domain/organization/organization.model';
-import { ContributorDetail } from '../domain/contributor-details/contributor-detail.model';
 
 @Injectable({
     providedIn: 'root'
@@ -76,18 +75,29 @@ export class StateService {
     selectContributor(contributor: Contributor) {
         this.selectedContributorSubject.next(contributor);
         this.store.fetchContributorRepos(contributor.username);
-        this.store.fetchContributorDetails([]);
+        this.store.disableDetailProcessing();
     }
 
     selectOrganization(organizationName: string) {
         this.selectedOrganizationSubject.next(new Organization(0, organizationName));
         this.store.fetchOrganization(organizationName);
+        this.store.disableDetailProcessing();
     }
 
     selectRepo(repo: Repository) {
         this.selectedRepoSubject.next(repo);
         this.store.fetchRepositoryContributors(repo.fullName);
-        this.store.fetchContributorDetails([]);
+        if (!repo.isPartOfOrganization(this.selectedOrganizationSubject.getValue())) {
+            this.store.disableDetailProcessing();
+        }
+    }
+
+    loadMissingContributorDetails() {
+        const organization = this.selectedOrganizationSubject.getValue();
+        const missingContributors = organization.contributorsWithoutDetailNames;
+        if (missingContributors.length > 0) {
+            this.store.fetchContributorDetails(missingContributors);
+        }
     }
 
     private mergeRepoContributorDetails(contributorDetails) {
