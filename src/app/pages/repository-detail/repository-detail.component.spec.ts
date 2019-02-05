@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RepositoryDetailComponent } from './repository-detail.component';
-import { RepositoryService } from '../core/domain/repository/repository.service';
-import { RepositoryServiceStub } from '../core/domain/repository/repository.service.stub';
+import { RepositoryService } from 'src/app/core/domain/repository/repository.service';
+import { RepositoryServiceStub } from 'src/app/core/domain/repository/repository.service.stub';
 
 describe('RepositoryDetailComponent', () => {
   let component: RepositoryDetailComponent;

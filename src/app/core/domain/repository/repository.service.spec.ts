@@ -18,9 +18,9 @@ xdescribe('RepositoryService', () => {
         expect(service).toBeTruthy();
       });
 
-      it('should get contributors', () => {
-         const service: RepositoryService = TestBed.get(RepositoryService);
-         service.getRepoContributors(new Repository('angular/angular')).subscribe(repos => {
-         });
-      });
+      // it('should get contributors', () => {
+      //    const service: RepositoryService = TestBed.get(RepositoryService);
+      //    service.getRepoContributors('angular/angular').subscribe(repos => {
+      //    });
+      // });
 });

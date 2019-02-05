@@ -66,19 +66,23 @@ export class Organization {
         return this.reposLoadedCount > 0 && this.reposLoadedCount == this.repositories.length;
     }
 
-    markLoaded() {
-        this._isLoaded = true;
-    }
-
     get isLoaded() {
         return this._isLoaded;
     }
 
     addRepositories(repositories: Repository[]) {
         repositories.forEach(repository => this.addRepository(repository));
+        this._isLoaded = true;
     }
 
     addRepository(repository: Repository) {
         this._repositories[repository.name] = repository;
+    }
+
+    mergeRepository(repository: Repository) {
+        const orgRepo = this._repositories[repository.name]
+        ? this._repositories[repository.name].merge(repository) : repository;
+
+        this.addRepository(orgRepo);
     }
 }

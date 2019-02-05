@@ -21,14 +21,14 @@ xdescribe('ContributorService', () => {
       });
 
       it('should get contributor', () => {
-         service.getOne(new Contributor(1, 'bradlygreen', 1)).subscribe(contributor => {
+         service.getOne('username').subscribe(contributor => {
             // console.log(contributor.followers, contributor.repoCount);
          });
       });
 
-      it('should get contributor repos', () => {
-        service.getContributorRepos(new Contributor(1, 'bradlygreen', 1)).subscribe(repositories => {
-          // expect(repositories.length).toBeGreaterThan(0);
-        });
-      });
+      // it('should get contributor repos', () => {
+      //   service.getContributorRepos('username')).subscribe(repositories => {
+      //     // expect(repositories.length).toBeGreaterThan(0);
+      //   });
+      // });
 });

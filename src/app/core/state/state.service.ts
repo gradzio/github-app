@@ -25,11 +25,11 @@ export class StateService {
             .pipe(
                 map(org => {
                     if (org.isLoaded) {
-                        this.selectedOrganizationSubject.next(org);
                         org.repositories.forEach(repo => {
-                            this.store.fetchRepositoryContributors(repo);
+                            this.store.fetchRepositoryContributors(repo.fullName);
                         });
                     }
+                    this.selectedOrganizationSubject.next(org);
                 })
             )
             .subscribe();
@@ -61,10 +61,13 @@ export class StateService {
                         }
                     }
                     
-                    const organization = this.selectedOrganizationSubject.getValue();
-                    if (repository.isPartOfOrganization(organization) && organization.hasLoadedAllRepos) {
+                    const organization: Organization = this.selectedOrganizationSubject.getValue();
+                    if (repository.isPartOfOrganization(organization)) {
+                        organization.mergeRepository(repository);
+                        if (organization.hasLoadedAllRepos) {
+                            this.store.fetchContributorDetails(organization.contributorsWithoutDetailNames);
+                        }
                         this.selectedOrganizationSubject.next(organization);
-                        this.store.fetchContributorDetails(organization.contributorsWithoutDetailNames);
                     }
                 })
             ).subscribe();
@@ -83,26 +86,20 @@ export class StateService {
 
     selectRepo(repo: Repository) {
         this.selectedRepoSubject.next(repo);
-        this.store.fetchRepositoryContributors(repo);
+        this.store.fetchRepositoryContributors(repo.fullName);
+        this.store.fetchContributorDetails([]);
     }
 
     private mergeRepoContributorDetails(contributorDetails) {
-        const repo = this.selectedRepoSubject.getValue();
+        const repo: Repository = this.selectedRepoSubject.getValue();
         if (repo) {
-            const contribs = repo.contributors.map(contributor => {
-                const contributorDetail = contributorDetails[contributor.username];
-                if (contributorDetail) {
-                    contributor.merge(contributorDetail);
-                }
-                return contributor;
-            });
-            repo.addContributors(contribs);
+            repo.mergeContributorDetails(contributorDetails);
             this.selectedRepoSubject.next(repo);
         }
     }
 
     private mergeOrgContributorDetails(contributorDetails) {
-        const org = this.selectedOrganizationSubject.getValue();
+        const org: Organization = this.selectedOrganizationSubject.getValue();
         if (org) {
             org.mergeContributorDetails(contributorDetails);
             this.selectedOrganizationSubject.next(org);
@@ -110,7 +107,7 @@ export class StateService {
     }
 
     private mergeContributorContributorDetails(contributorDetails) {
-        const contributor = this.selectedContributorSubject.getValue();
+        const contributor: Contributor = this.selectedContributorSubject.getValue();
         if (contributor) {
             const contributorDetail = contributorDetails[contributor.username];
             if (contributorDetail) {

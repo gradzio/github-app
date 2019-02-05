@@ -10,7 +10,7 @@ describe('Contributor', () => {
         contributor = new Contributor(1, 'username', 1);
     });
 
-    fit('should create default contributor', () => {
+    it('should create default contributor', () => {
         expect(contributor.id).toEqual(1);
         expect(contributor.username).toEqual('username');
         expect(contributor.contribution).toEqual(1);

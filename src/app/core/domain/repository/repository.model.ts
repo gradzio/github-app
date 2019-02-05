@@ -24,7 +24,7 @@ export class Repository {
     }
 
     isPartOfOrganization(organization: Organization): boolean {
-        return this.organization === organization.name;
+        return organization.name === organization.name;
     }
 
     get organization() {
@@ -39,6 +39,14 @@ export class Repository {
         return this._organization + '/' + this._name;
     }
 
+    merge(repository: Repository) {
+        const newContributors = repository.contributors
+            .filter(contributor => Object.keys(this._contributors).indexOf(contributor.username));
+
+        this.addContributors(newContributors);
+        return this;
+    }
+
     mergeContributorDetails(contributorDetails) {
         this.contributors
             .filter(contributor => contributorDetails[contributor.username])
@@ -50,6 +58,7 @@ export class Repository {
 
     addContributors(contributors) {
         contributors.forEach(contributor => this.addContributor(contributor));
+        this._isLoaded = true;
     }
 
     addContributor(contributor: Contributor) {
@@ -58,10 +67,6 @@ export class Repository {
 
     getContributor(username) {
         return this._contributors[username];
-    }
-
-    markLoaded() {
-        this._isLoaded = true;
     }
 
     get contributors(): Contributor[] {

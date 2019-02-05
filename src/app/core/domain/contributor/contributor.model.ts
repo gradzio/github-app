@@ -87,6 +87,7 @@ export class Contributor {
 
     addRepositories(repositories: Repository[]) {
         repositories.forEach(repository => this.addRepository(repository));
+        this._isLoaded = true;
     }
 
     addRepository(repository: Repository) {
@@ -106,10 +107,6 @@ export class Contributor {
 
     get gists() {
         return this._gists;
-    }
-
-    markLoaded() {
-        this._isLoaded = true;
     }
 
     get isLoaded() {
