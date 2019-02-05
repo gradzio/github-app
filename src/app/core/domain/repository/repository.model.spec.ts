@@ -19,26 +19,28 @@ describe('Repository', () => {
     });
 
     it('should have no contributors', () => {
-        expect(repository.contributors.size).toEqual(0);
+        expect(repository.contributors.length).toEqual(0);
     });
 
     it('should have single contributor', () => {
         repository.addContributor(new Contributor(1, 'username', 0));
-        expect(repository.contributors.size).toEqual(1);
+        expect(repository.contributors.length).toEqual(1);
     });
 
-    // it('should get contributor', () => {
-    //     repository.addContributor(new Contributor(1, 'username', 0));
-    //     const contributor = repository.getContributor('username');
-    //     expect(contributor.id).toEqual(1);
-    //     expect(contributor.username).toEqual('username');
-    // });
+    it('should not duplicate same contributors', () => {
+        repository.addContributor(new Contributor(1, 'username1', 0));
+        repository.addContributor(new Contributor(2, 'username2', 0));
+        repository.addContributor(new Contributor(1, 'username1', 0));
+        expect(repository.contributors.length).toEqual(2);
+    });
 
-    // it('should not duplicate same contributors', () => {
-    //     organization.addContributor(new Contributor(1, 'username1', 0));
-    //     organization.addContributor(new Contributor(2, 'username2', 0));
-    //     organization.addContributor(new Contributor(1, 'username1', 0));
-    //     expect(organization.contributors.size).toEqual(2);
-    // });
+    it('should add multiple contributors', () => {
+        repository.addContributors([
+            new Contributor(1, 'username1', 0),
+            new Contributor(2, 'username2', 0),
+            new Contributor(3, 'username3', 0)
+        ]);
+        expect(repository.contributors.length).toEqual(3);
+    });
 
 });

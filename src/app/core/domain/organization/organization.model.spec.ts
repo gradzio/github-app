@@ -2,7 +2,7 @@ import { Organization } from "./organization.model";
 import { Contributor } from '../contributor/contributor.model';
 import { Repository } from '../repository/repository.model';
 
-fdescribe('Organization', () => {
+describe('Organization', () => {
     let organization: Organization;
 
     beforeEach(() => {

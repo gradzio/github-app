@@ -13,7 +13,7 @@ describe('Contributor', () => {
     it('should create default contributor', () => {
         expect(contributor.id).toEqual(1);
         expect(contributor.username).toEqual('username');
-        expect(contributor.contribution).toEqual(1);
+        expect(contributor.contributions).toEqual(1);
     });
 
     it('should throw error on negative contribution count', () => {

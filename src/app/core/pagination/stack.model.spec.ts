@@ -1,6 +1,6 @@
 import { PagedStack } from "./stack.model";
 
-fdescribe('PagedStack', () => {
+describe('PagedStack', () => {
     let stack: PagedStack<string>;
     beforeEach(() => {
         stack = new PagedStack(2);
