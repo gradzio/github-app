@@ -1,4 +1,3 @@
-// import * as $ from 'jquery';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import {

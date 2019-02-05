@@ -9,8 +9,7 @@ xdescribe('ContributorService', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [
-          HttpClientModule,
-        //   HttpClientTestingModule
+          HttpClientTestingModule
         ]
       });
       service = TestBed.get(ContributorService);
@@ -19,16 +18,4 @@ xdescribe('ContributorService', () => {
       it('should be created', () => {
         expect(service).toBeTruthy();
       });
-
-      it('should get contributor', () => {
-         service.getOne('username').subscribe(contributor => {
-            // console.log(contributor.followers, contributor.repoCount);
-         });
-      });
-
-      // it('should get contributor repos', () => {
-      //   service.getContributorRepos('username')).subscribe(repositories => {
-      //     // expect(repositories.length).toBeGreaterThan(0);
-      //   });
-      // });
 });

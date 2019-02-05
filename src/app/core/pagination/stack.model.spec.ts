@@ -16,15 +16,4 @@ fdescribe('PagedStack', () => {
 
         expect(stack.length).toEqual(1);
     });
-
-    // it('should get first page', () => {
-    //     const names = ['name1', 'name2', 'name3', 'name4'];
-
-    //     stack.push(names);
-
-    //     const actual = stack.pop();
-
-    //     expect(actual.length).toEqual(2);
-    //     expect(actual[0]).
-    // });
 });

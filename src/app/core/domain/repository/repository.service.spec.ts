@@ -8,8 +8,7 @@ import { Repository } from './repository.model';
 xdescribe('RepositoryService', () => {
     beforeEach(() => TestBed.configureTestingModule({
         imports: [
-          HttpClientModule,
-        //   HttpClientTestingModule
+          HttpClientTestingModule
         ]
       }));
     
@@ -17,10 +16,4 @@ xdescribe('RepositoryService', () => {
         const service: RepositoryService = TestBed.get(RepositoryService);
         expect(service).toBeTruthy();
       });
-
-      // it('should get contributors', () => {
-      //    const service: RepositoryService = TestBed.get(RepositoryService);
-      //    service.getRepoContributors('angular/angular').subscribe(repos => {
-      //    });
-      // });
 });

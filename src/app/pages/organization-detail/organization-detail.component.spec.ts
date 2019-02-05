@@ -30,10 +30,4 @@ describe('OrganizationComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should get contributors', () => {
-    // component.contributors$.subscribe(contributors => {
-    //   expect(contributors.items.length).toBe(2);
-    // });
-  });
 });

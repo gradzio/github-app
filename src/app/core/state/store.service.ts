@@ -1,6 +1,6 @@
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Organization } from '../domain/organization/organization.model';
-import { switchMap, map, flatMap, filter, mergeMap, retry } from 'rxjs/operators';
+import { switchMap, map, retry } from 'rxjs/operators';
 import { Repository } from '../domain/repository/repository.model';
 import { Injectable } from '@angular/core';
 import { Contributor } from '../domain/contributor/contributor.model';
@@ -16,12 +16,6 @@ interface LoadDetails {
     providedIn: 'root'
 })
 export class StoreService {
-    // private orgEventsSubject = new Subject<Event>();
-    // orgEvents$: Observable<Event> = this.orgEventsSubject.asObservable();
-    // private repoEventsSubject = new Subject<Event>();
-    // repoEvents$: Observable<Event> = this.repoEventsSubject.asObservable();
-    // private contributorEventsSubject = new Subject<Event>();
-    // contributorEvents$: Observable<Event> = this.contributorEventsSubject.asObservable();
     private detailEventsSubject = new Subject<LoadDetails>();
     detailEvents$ = this.detailEventsSubject.asObservable();
     
@@ -60,6 +54,7 @@ export class StoreService {
         const details = this.contributorDetailsSubject.getValue();
         this.contributorService.getContributorsDetails(contributorsChunk)
             .pipe(
+                retry(5),
                 map((contributorDetails) => {
                     contributorDetails.forEach(contributorDetail => {
                         details[contributorDetail.login] = contributorDetail;
@@ -127,7 +122,6 @@ export class StoreService {
         if (this.contributorDetailsToBeFetched.length > 0) {
             this.isDetailProcessingEnabledSubject.next(true);
             const contributorsChunk = this.contributorDetailsToBeFetched.slice(0, this.contributorPageSize);
-            // this.contributorDetailsToBeFetched = [...contributorNames, ...this.contributorDetailsToBeFetched.filter(contributorName => contributorNames.indexOf(contributorName) == -1 )];
             this.detailEventsSubject.next({contributorNames: contributorsChunk});
         }
      }

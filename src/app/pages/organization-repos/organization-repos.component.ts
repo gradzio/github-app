@@ -20,14 +20,7 @@ export class OrganizationReposComponent implements OnInit {
   constructor(private state: StateService, private router: Router) {}
 
   ngOnInit() {
-    this.organization$ = this.state.selectedOrganization$
-      .pipe(
-        filter((organization: Organization) => organization !== null),
-        map(organization => {
-          // this.state.selectOrganization(organization.name);
-          return organization;
-        })
-      );
+    this.organization$ = this.state.selectedOrganization$;
     this.repoCollection$ = this.state.selectedOrganization$
       .pipe(
         filter((organization: Organization) => organization.hasLoadedAllRepos),

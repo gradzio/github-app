@@ -27,8 +27,4 @@ describe('ContributorDetailComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  // it('should return contributor with repos', () => {
-  //   component.contributor$.subscribe(contributor => expect(contributor.repositories.length).toEqual(3));
-  // });
 });

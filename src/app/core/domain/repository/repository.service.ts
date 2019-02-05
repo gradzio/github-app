@@ -21,8 +21,6 @@ export class RepositoryService extends PaginatedService {
         return this.client.get<any>(`${baseUri}?per_page=${this.perPage}&page=${this.page}`, {headers: github.headers, observe: 'response'})
         .pipe(
             switchMap(resp => this.getRemainingPages(resp, baseUri)),
-            // flatMap(resp => resp),
-            // filter(resp => resp.body),
             map(allResponses => this.proessAllResponses(allResponses))
         );
     }
